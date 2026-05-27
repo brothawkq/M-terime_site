@@ -95,5 +95,5 @@ python3 -m http.server 8000
 
 ## 👤 Geliştirici
 
-**Baran Nilgün** — Freelance Web Geliştirici  
+**Baran ilgün** — Freelance Web Geliştirici  
 Bu site [Toprak Arda Duman](https://toprakardaduman.netlify.app) için özel olarak geliştirilmiştir.
