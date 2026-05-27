@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="../public/css/index.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+   <title>Blog — Toprak Arda Duman</title>
+</head>
+
+<body>
+
+   <!-- TOPBAR -->
+   <div class="topbar">
+      <div class="wrapper target">
+         <div class="left">
+            <a href="#" target="_blank"><i class="fa-brands fa-square-x-twitter"></i></a>
+            <a href="https://www.instagram.com/toprakarda62?igsh=MWpqdGJwZDV3MHMydQ==" target="_blank"><i class="fa-brands fa-square-instagram"></i></a>
+            <a href="#" target="_blank"><i class="fa-brands fa-square-facebook"></i></a>
+            <a href="#" target="_blank"><i class="fa-brands fa-square-pinterest"></i></a>
+         </div>
+         <div class="center">
+            <a href="../index.html">ANA SAYFA</a>
+            <a href="./blog.html">BLOG</a>
+            <a href="./contact.html">İLETİŞİM</a>
+            <a href="./login.html">GİRİŞ</a>
+         </div>
+         <div class="right">
+            <div class="searchEngine" id="searchEngine">
+               <input type="text" placeholder="Ara...">
+               <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <!-- HEADER -->
+   <header class="header target">
+      <img src="../public/img/home.jpg" alt="blog kapak">
+      <h1>Blogum</h1>
+      <h3>Tüm Yazılar</h3>
+   </header>
+
+   <!-- BLOG META BAR -->
+   <div class="blog-meta-bar">
+      <span id="postCountText">Yazılar yükleniyor...</span>
+      <div class="blog-meta-actions">
+         <span class="blog-sort-label"><i class="fa-solid fa-arrow-down-wide-short"></i> Yeniden Eskiye</span>
+      </div>
+   </div>
+
+   <!-- Feature 6: KATEGORİ FİLTRE ─────────────────────────────────── -->
+   <div class="category-filter-bar" id="categoryFilterBar" style="display:none">
+      <button class="cat-filter-btn active" data-cat="all">Tümü</button>
+   </div>
+
+   <!-- BLOG İÇERİĞİ -->
+   <div class="home">
+      <div class="wrapper">
+
+         <!-- YAZILLAR -->
+         <div class="posts" id="postsContainer"></div>
+
+         <!-- KENAR ÇUBUĞU -->
+         <div class="sidebar">
+
+            <div class="area target">
+               <h3>Yazar</h3>
+               <img id="blogAuthorPhoto" src="../public/img/user-2.png" alt="yazar">
+               <div class="categories" id="hashtagsGrid">
+                  <span id="tag1">#sanat</span>
+                  <span id="tag2">#tasarım</span>
+                  <span id="tag3">#resim</span>
+                  <span id="tag4">#kültür</span>
+               </div>
+            </div>
+
+            <div class="area target">
+               <h3>Sosyal</h3>
+               <div id="socialLinksArea" style="display:flex;flex-direction:column;gap:12px;padding-top:4px"></div>
+            </div>
+
+            <!-- Feature 7: E-POSTA BÜLTENİ ──────────────────────── -->
+            <div class="area target newsletter-area">
+               <h3><i class="fa-regular fa-bell"></i> Bülten</h3>
+               <p>Yeni yazılardan ilk haberdar ol.</p>
+               <form id="newsletterForm" class="newsletter-form">
+                  <input type="email" id="nlEmail" placeholder="E-posta adresiniz" required>
+                  <button type="submit">Abone Ol</button>
+               </form>
+               <p id="nlSuccess" style="display:none;color:green;font-family:'Josefin Sans',sans-serif;font-size:0.85rem;margin-top:8px">
+                  <i class="fa-solid fa-check"></i> Abone oldunuz!
+               </p>
+            </div>
+
+         </div>
+      </div>
+   </div>
+
+   <!-- SCRIPTS -->
+   <script src="../public/js/search.js"></script>
+   <script src="../public/js/scroll.js"></script>
+
+   <!-- FIREBASE -->
+   <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import { getFirestore, collection, getDocs, addDoc, query, where, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+         apiKey: "AIzaSyBk9mcH4cFoF5Er6zKB6oanooO6ZYT3_Vc",
+         authDomain: "blog-5a0b5.firebaseapp.com",
+         projectId: "blog-5a0b5",
+         storageBucket: "blog-5a0b5.firebasestorage.app",
+         messagingSenderId: "798568666109",
+         appId: "1:798568666109:web:128224277ce71b4ab1bf94",
+         measurementId: "G-H56W0VWLS9"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db  = getFirestore(app);
+      const container   = document.getElementById("postsContainer");
+      const countEl     = document.getElementById("postCountText");
+
+      function parseTRDate(str) {
+         if (!str) return new Date(0);
+         const p = str.split(".");
+         return p.length === 3 ? new Date(+p[2], +p[1] - 1, +p[0]) : new Date(0);
+      }
+
+      function readingTime(text) {
+         const words = text.trim().split(/\s+/).length;
+         return Math.max(1, Math.ceil(words / 200));
+      }
+
+      // Tüm post verilerini tut (filtre için)
+      let allPosts = [];
+
+      function renderPosts(posts) {
+         container.innerHTML = "";
+
+         if (!posts.length) {
+            container.innerHTML = "<p style='font-family:Arvo,serif;padding:20px'>Bu kategoride yazı yok.</p>";
+            return;
+         }
+
+         posts.forEach(post => {
+            const div = document.createElement("div");
+            div.classList.add("post", "target");
+            div.style.cursor = "pointer";
+
+            const rt = readingTime(post.content || "");
+
+            div.innerHTML = `
+               <div class="post-badges">
+                  <span class="badge-readtime"><i class="fa-regular fa-clock"></i> ${rt} dk okuma</span>
+                  ${post.category ? `<span class="badge-category">${post.category}</span>` : ""}
+                  ${post.featured ? `<span class="badge-featured"><i class="fa-solid fa-star"></i> Öne Çıkan</span>` : ""}
+               </div>
+               <h1>${post.title}</h1>
+               <img src="${post.image || '../public/img/content-1.jpg'}" alt="içerik">
+               <p>${post.content}</p>
+               <div class="authorAndDate">
+                  <span>${post.author}</span>
+                  <span>${post.date}</span>
+               </div>
+               <div class="post-stat-bar">
+                  <span><i class="fa-regular fa-eye"></i> ${post.viewCount || 0}</span>
+                  <span><i class="fa-regular fa-heart"></i> ${post.likeCount || 0}</span>
+               </div>
+            `;
+
+            div.addEventListener("click", () => {
+               window.location.href = `./post.html?id=${post.id}`;
+            });
+
+            container.appendChild(div);
+         });
+
+         // Dinamik post kartları için IntersectionObserver
+         const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+               if (e.isIntersecting) e.target.classList.add("active");
+               else e.target.classList.remove("active");
+            });
+         }, { threshold: 0.1 });
+         document.querySelectorAll(".post.target").forEach(el => obs.observe(el));
+      }
+
+      window.addEventListener("DOMContentLoaded", async () => {
+
+         // SIDEBAR: Yazar foto + hashtag + sosyal linkler
+         try {
+            const profileSnap = await getDoc(doc(db, "settings", "profile"));
+            if (profileSnap.exists()) {
+               const p = profileSnap.data();
+               if (p.blogPhotoUrl) document.getElementById("blogAuthorPhoto").src = p.blogPhotoUrl;
+               for (let i = 1; i <= 4; i++) {
+                  const val = p["tag" + i];
+                  if (val) {
+                     const el = document.getElementById("tag" + i);
+                     if (el) el.textContent = "#" + val.replace(/^#/, "");
+                  }
+               }
+               const socialArea = document.getElementById("socialLinksArea");
+               if (socialArea) {
+                  let html = "";
+                  if (p.linkedinUrl) html += `<a href="${p.linkedinUrl}" target="_blank" style="display:flex;align-items:center;gap:9px;font-family:'Josefin Sans',sans-serif;color:#333;text-decoration:none;font-size:0.95rem"><i class="fa-brands fa-linkedin" style="font-size:1.3rem;color:#0077b5"></i> LinkedIn</a>`;
+                  if (p.githubUrl)   html += `<a href="${p.githubUrl}"   target="_blank" style="display:flex;align-items:center;gap:9px;font-family:'Josefin Sans',sans-serif;color:#333;text-decoration:none;font-size:0.95rem"><i class="fa-brands fa-github"   style="font-size:1.3rem;color:#333"></i> GitHub</a>`;
+                  if (!html) html = `<p style="font-family:'Josefin Sans',sans-serif;font-size:0.85rem;color:#999">Henüz eklenmedi.</p>`;
+                  socialArea.innerHTML = html;
+               }
+            }
+         } catch (_) {}
+
+         try {
+            const snapshot = await getDocs(collection(db, "posts"));
+
+            if (snapshot.empty) {
+               container.innerHTML = "<p style='font-family:Arvo,serif;padding:20px'>Henüz yazı yok.</p>";
+               countEl.textContent = "0 yazı bulunuyor";
+               return;
+            }
+
+            snapshot.forEach(doc => allPosts.push({ id: doc.id, ...doc.data() }));
+            allPosts.sort((a, b) => parseTRDate(b.date) - parseTRDate(a.date));
+            countEl.textContent = `${allPosts.length} yazı bulunuyor`;
+
+            // Feature 6: KATEGORİ FİLTRE BUTONLARI ─────────────────
+            const cats = [...new Set(allPosts.map(p => p.category).filter(Boolean))];
+            if (cats.length > 0) {
+               const bar = document.getElementById("categoryFilterBar");
+               bar.style.display = "flex";
+               cats.forEach(cat => {
+                  const btn = document.createElement("button");
+                  btn.className      = "cat-filter-btn";
+                  btn.dataset.cat    = cat;
+                  btn.textContent    = cat;
+                  bar.appendChild(btn);
+               });
+
+               bar.querySelectorAll(".cat-filter-btn").forEach(btn => {
+                  btn.addEventListener("click", () => {
+                     bar.querySelectorAll(".cat-filter-btn").forEach(b => b.classList.remove("active"));
+                     btn.classList.add("active");
+                     const cat = btn.dataset.cat;
+                     const filtered = cat === "all" ? allPosts : allPosts.filter(p => p.category === cat);
+                     countEl.textContent = `${filtered.length} yazı bulunuyor`;
+                     renderPosts(filtered);
+                  });
+               });
+            }
+
+            renderPosts(allPosts);
+
+            // URL'de ?search= parametresi varsa uygula
+            const urlSearch = new URLSearchParams(window.location.search).get('search');
+            if (urlSearch) applySearch(urlSearch);
+
+         } catch (err) {
+            console.error("FIREBASE HATA:", err);
+            container.innerHTML = "<p style='font-family:Arvo,serif;padding:20px'>Yazılar yüklenemedi.</p>";
+         }
+
+         // Sayfa içi arama (search.js'den CustomEvent)
+         window.addEventListener('siteSearch', (e) => applySearch(e.detail));
+
+         function applySearch(query) {
+            const q = query.toLowerCase().trim();
+            const filtered = allPosts.filter(p =>
+               (p.title   || "").toLowerCase().includes(q) ||
+               (p.content || "").toLowerCase().includes(q) ||
+               (p.author  || "").toLowerCase().includes(q) ||
+               (p.category|| "").toLowerCase().includes(q)
+            );
+            countEl.textContent = `"${query}" için ${filtered.length} sonuç`;
+            renderPosts(filtered);
+            // Arama kutusunu doldur ve aç
+            const inp = document.querySelector('#searchEngine input');
+            if (inp) {
+               inp.value = query;
+               document.getElementById('searchEngine').classList.add('active');
+            }
+         }
+
+         // Feature 7: BÜLTEN ABONE FORMU ──────────────────────────
+         document.getElementById("newsletterForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("nlEmail").value.trim();
+            if (!email) return;
+
+            const btn = e.target.querySelector("button");
+            btn.disabled = true;
+            btn.textContent = "...";
+
+            try {
+               // Aynı e-posta zaten kayıtlı mı kontrol et
+               const existing = await getDocs(
+                  query(collection(db, "subscribers"), where("email", "==", email))
+               );
+               if (!existing.empty) {
+                  document.getElementById("nlSuccess").textContent = "Bu e-posta zaten kayıtlı!";
+                  document.getElementById("nlSuccess").style.display = "block";
+               } else {
+                  await addDoc(collection(db, "subscribers"), {
+                     email,
+                     date: new Date().toLocaleDateString("tr-TR")
+                  });
+                  document.getElementById("newsletterForm").style.display = "none";
+                  document.getElementById("nlSuccess").textContent = "✓ Abone oldunuz!";
+                  document.getElementById("nlSuccess").style.display = "block";
+               }
+            } catch (err) {
+               alert("Hata: " + err.message);
+               btn.disabled = false;
+               btn.textContent = "Abone Ol";
+            }
+         });
+      });
+   </script>
+
+</body>
+</html>

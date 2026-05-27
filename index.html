@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="public/css/index.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+   <title>Toprak Arda Duman</title>
+   <style>
+      #heroContent, #aboutSection { opacity: 0; }
+      #heroContent.loaded, #aboutSection.loaded { opacity: 1; transition: opacity 0.4s ease; }
+   </style>
+</head>
+
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+   <div class="wrapper target">
+      <div class="left">
+         <a href="#" target="_blank"><i class="fa-brands fa-square-x-twitter"></i></a>
+         <a href="https://www.instagram.com/toprakarda62?igsh=MWpqdGJwZDV3MHMydQ==" target="_blank"><i class="fa-brands fa-square-instagram"></i></a>
+         <a href="#" target="_blank"><i class="fa-brands fa-square-facebook"></i></a>
+         <a href="#" target="_blank"><i class="fa-brands fa-square-pinterest"></i></a>
+      </div>
+      <div class="center">
+         <a href="index.html">ANA SAYFA</a>
+         <a href="pages/blog.html">BLOG</a>
+         <a href="pages/contact.html">İLETİŞİM</a>
+         <a href="pages/login.html">GİRİŞ</a>
+      </div>
+      <div class="right">
+         <div class="searchEngine" id="searchEngine">
+            <input type="text" placeholder="Ara...">
+            <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i>
+         </div>
+      </div>
+   </div>
+</div>
+
+<!-- HERO -->
+<section class="personal-hero">
+   <img class="hero-bg" id="heroBg" src="public/img/login.jpg" alt="arka plan">
+   <div class="hero-content target" id="heroContent">
+      <img class="hero-avatar" id="heroAvatar" src="public/img/user-2.png" alt="Toprak Arda Duman">
+      <h1 id="heroName"></h1>
+      <h2 id="heroTitle"></h2>
+      <div class="hero-socials">
+         <a href="#" target="_blank" title="X / Twitter"><i class="fa-brands fa-square-x-twitter"></i></a>
+         <a href="https://www.instagram.com/toprakarda62?igsh=MWpqdGJwZDV3MHMydQ==" target="_blank" title="Instagram"><i class="fa-brands fa-square-instagram"></i></a>
+         <a href="mailto:toprakardaduman2005@icloud.com" title="E-posta"><i class="fa-solid fa-envelope"></i></a>
+      </div>
+      <div class="hero-btns">
+         <a href="pages/blog.html" class="hero-btn hero-btn-primary">Bloğuma Git</a>
+         <a href="pages/contact.html" class="hero-btn hero-btn-secondary">İletişim</a>
+      </div>
+   </div>
+</section>
+
+<!-- HAKKIMDA -->
+<section class="personal-about target" id="aboutSection">
+   <div class="personal-about-inner">
+      <div class="personal-about-text">
+         <h2>Hakkımda</h2>
+         <p id="bio1Text"></p>
+         <p id="bio2Text"></p>
+      </div>
+      <div class="personal-about-photo">
+         <img id="aboutPhoto" src="public/img/team-1.jpg" alt="Toprak Arda Duman">
+      </div>
+   </div>
+</section>
+
+<!-- Feature 5: ÖNE ÇIKAN YAZI -->
+<section class="featured-section" id="featuredSection" style="display:none">
+   <div class="featured-inner">
+      <span class="featured-label"><i class="fa-solid fa-star"></i> Öne Çıkan Yazı</span>
+      <div class="featured-card" id="featuredCard"></div>
+   </div>
+</section>
+
+<!-- SON YAZILARIMDAN -->
+<section class="latest-posts">
+   <h2 class="section-title target">Son Yazılarımdan</h2>
+   <div class="latest-posts-grid" id="latestPostsGrid">
+      <p class="loading-text">Yazılar yükleniyor...</p>
+   </div>
+   <div class="latest-posts-cta target">
+      <a href="pages/blog.html" class="btn-all-posts">Tüm Yazıları Gör →</a>
+   </div>
+</section>
+
+<!-- İLGİ ALANLARI -->
+<section class="personal-interests">
+   <h2 class="section-title target">İlgi Alanlarım</h2>
+   <div class="interests-grid" id="interestsGrid">
+
+      <div class="interest-card target">
+         <div class="interest-icon"><i id="int1Icon" class="fa-solid fa-palette"></i></div>
+         <h3 id="int1Title"></h3>
+         <p id="int1Desc"></p>
+      </div>
+
+      <div class="interest-card target">
+         <div class="interest-icon"><i id="int2Icon" class="fa-solid fa-pen-nib"></i></div>
+         <h3 id="int2Title"></h3>
+         <p id="int2Desc"></p>
+      </div>
+
+      <div class="interest-card target">
+         <div class="interest-icon"><i id="int3Icon" class="fa-solid fa-feather-pointed"></i></div>
+         <h3 id="int3Title"></h3>
+         <p id="int3Desc"></p>
+      </div>
+
+      <div class="interest-card target">
+         <div class="interest-icon"><i id="int4Icon" class="fa-solid fa-earth-europe"></i></div>
+         <h3 id="int4Title"></h3>
+         <p id="int4Desc"></p>
+      </div>
+
+   </div>
+</section>
+
+<!-- İLETİŞİM CTA -->
+<section class="personal-contact target">
+   <h2 class="section-title">İletişime Geç</h2>
+   <p>Benimle iletişime geçmek ister misin? Aşağıdaki kanallardan ulaşabilirsin.</p>
+   <div class="contact-links">
+      <a href="mailto:toprakardaduman2005@icloud.com" class="contact-link">
+         <i class="fa-solid fa-envelope"></i>
+         toprakardaduman2005@icloud.com
+      </a>
+      <a href="https://www.instagram.com/toprakarda62?igsh=MWpqdGJwZDV3MHMydQ==" target="_blank" class="contact-link">
+         <i class="fa-brands fa-instagram"></i>
+         @toprakarda62
+      </a>
+   </div>
+</section>
+
+<!-- SCRIPTS -->
+<script src="public/js/search.js"></script>
+<script src="public/js/scroll.js"></script>
+
+<!-- FIREBASE — Son Yazılarımdan + Öne Çıkan + Profil -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+window.addEventListener("DOMContentLoaded", async () => {
+
+   const firebaseConfig = {
+      apiKey: "AIzaSyBk9mcH4cFoF5Er6zKB6oanooO6ZYT3_Vc",
+      authDomain: "blog-5a0b5.firebaseapp.com",
+      projectId: "blog-5a0b5",
+      storageBucket: "blog-5a0b5.firebasestorage.app",
+      messagingSenderId: "798568666109",
+      appId: "1:798568666109:web:128224277ce71b4ab1bf94",
+      measurementId: "G-H56W0VWLS9"
+   };
+
+   const app = initializeApp(firebaseConfig);
+   const db  = getFirestore(app);
+   const grid = document.getElementById("latestPostsGrid");
+
+   function parseTRDate(str) {
+      if (!str) return new Date(0);
+      const p = str.split(".");
+      return p.length === 3 ? new Date(+p[2], +p[1] - 1, +p[0]) : new Date(0);
+   }
+
+   // PROFİL BİYOGRAFİSİ + İLGİ ALANLARI ──────────────────────────────
+   function revealSections() {
+      document.getElementById("heroContent").classList.add("loaded");
+      document.getElementById("aboutSection").classList.add("loaded");
+   }
+
+   try {
+      const profileSnap = await getDoc(doc(db, "settings", "profile"));
+      if (profileSnap.exists()) {
+         const p = profileSnap.data();
+         if (p.heroPhotoUrl)  document.getElementById("heroAvatar").src = p.heroPhotoUrl;
+         if (p.heroBgUrl)     document.getElementById("heroBg").src     = p.heroBgUrl;
+         if (p.aboutPhotoUrl) document.getElementById("aboutPhoto").src  = p.aboutPhotoUrl;
+         document.getElementById("heroName").textContent  = p.name  || "";
+         document.getElementById("heroTitle").textContent = p.title || "";
+         if (p.bio1) document.getElementById("bio1Text").textContent = p.bio1;
+         if (p.bio2) document.getElementById("bio2Text").textContent = p.bio2;
+         if (p.int1Icon)  document.getElementById("int1Icon").className  = "fa-solid " + p.int1Icon;
+         if (p.int1Title) document.getElementById("int1Title").textContent = p.int1Title;
+         if (p.int1Desc)  document.getElementById("int1Desc").textContent  = p.int1Desc;
+         if (p.int2Icon)  document.getElementById("int2Icon").className  = "fa-solid " + p.int2Icon;
+         if (p.int2Title) document.getElementById("int2Title").textContent = p.int2Title;
+         if (p.int2Desc)  document.getElementById("int2Desc").textContent  = p.int2Desc;
+         if (p.int3Icon)  document.getElementById("int3Icon").className  = "fa-solid " + p.int3Icon;
+         if (p.int3Title) document.getElementById("int3Title").textContent = p.int3Title;
+         if (p.int3Desc)  document.getElementById("int3Desc").textContent  = p.int3Desc;
+         if (p.int4Icon)  document.getElementById("int4Icon").className  = "fa-solid " + p.int4Icon;
+         if (p.int4Title) document.getElementById("int4Title").textContent = p.int4Title;
+         if (p.int4Desc)  document.getElementById("int4Desc").textContent  = p.int4Desc;
+      }
+   } catch (_) {} finally {
+      revealSections();
+   }
+
+   // YAZILAR ─────────────────────────────────────────────────────────
+   try {
+      const snapshot = await getDocs(collection(db, "posts"));
+
+      if (snapshot.empty) {
+         grid.innerHTML = "<p class='loading-text'>Henüz yazı yok.</p>";
+         return;
+      }
+
+      const posts = [];
+      snapshot.forEach(d => posts.push({ id: d.id, ...d.data() }));
+      posts.sort((a, b) => parseTRDate(b.date) - parseTRDate(a.date));
+
+      // Feature 5: ÖNE ÇIKAN YAZI ──────────────────────────────────
+      const featuredPost = posts.find(p => p.featured);
+      if (featuredPost) {
+         const fCard = document.getElementById("featuredCard");
+         fCard.style.cursor = "pointer";
+         fCard.innerHTML = `
+            ${featuredPost.image ? `<img src="${featuredPost.image}" alt="${featuredPost.title}">` : ""}
+            <div class="featured-body">
+               ${featuredPost.category ? `<span class="featured-cat">${featuredPost.category}</span>` : ""}
+               <h2>${featuredPost.title}</h2>
+               <p>${featuredPost.content.substring(0, 120)}...</p>
+               <div class="featured-meta">
+                  <span>${featuredPost.author}</span>
+                  <span>${featuredPost.date}</span>
+               </div>
+               <span class="featured-read-btn">Okumaya Devam Et →</span>
+            </div>
+         `;
+         fCard.addEventListener("click", () => {
+            window.location.href = `pages/post.html?id=${featuredPost.id}`;
+         });
+         document.getElementById("featuredSection").style.display = "block";
+      }
+
+      // SON YAZILARIMDAN ────────────────────────────────────────────
+      grid.innerHTML = "";
+      posts.slice(0, 3).forEach(post => {
+         const card = document.createElement("div");
+         card.classList.add("latest-post-card", "target");
+         card.style.cursor = "pointer";
+         card.innerHTML = `
+            <img src="${post.image || 'public/img/content-1.jpg'}" alt="${post.title}">
+            <div class="lp-body">
+               <h3>${post.title}</h3>
+               <p class="lp-excerpt">${post.content.substring(0, 90)}...</p>
+               <div class="lp-meta">
+                  <span>${post.author}</span>
+                  <span>${post.date}</span>
+               </div>
+            </div>
+         `;
+         card.addEventListener("click", () => {
+            window.location.href = `pages/post.html?id=${post.id}`;
+         });
+         grid.appendChild(card);
+      });
+
+      // Dinamik kartlar için IntersectionObserver
+      const obs = new IntersectionObserver((entries) => {
+         entries.forEach(e => {
+            if (e.isIntersecting) e.target.classList.add("active");
+            else e.target.classList.remove("active");
+         });
+      }, { threshold: 0.1 });
+      document.querySelectorAll(".latest-post-card.target").forEach(el => obs.observe(el));
+
+   } catch (err) {
+      console.error("FIREBASE HATA:", err);
+      grid.innerHTML = "<p class='loading-text'>Yazılar yüklenemedi.</p>";
+   }
+});
+</script>
+
+</body>
+</html>

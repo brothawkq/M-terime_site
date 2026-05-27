@@ -1,0 +1,235 @@
+.posts {
+   flex: 9;
+   margin-bottom: 30px;
+   display: flex;
+   flex-wrap: wrap;
+   gap: 20px;
+}
+
+.posts .post {
+   width: calc(50% - 20px);
+   border: 1px solid rgba(0, 0, 0, 0.3);
+   border-radius: 10px;
+   padding: 15px;
+   margin-bottom: 30px;
+   background-color: white;
+}
+
+.posts h1 {
+   font-family: 'Pacifico', cursive;
+}
+
+.posts img {
+   width: 100%;
+   border-radius: 10px;
+   margin-bottom: 5px;
+   height: 300px;
+   object-fit: cover;
+}
+
+.posts p {
+   padding: 5px;
+   font-family: 'Arvo', serif;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   display: -webkit-box;
+   -webkit-line-clamp: 4;
+   -webkit-box-orient: vertical;
+   line-height: 23px;
+}
+
+.posts .authorAndDate {
+   width: 100%;
+   display: flex;
+   justify-content: space-between;
+   padding: 0px 10px;
+}
+
+.posts .authorAndDate span:nth-child(1) {
+   font-family: 'Dancing Script', cursive;
+   font-weight: 700;
+}
+
+.posts .authorAndDate span:nth-child(2) {
+   font-family: 'Ubuntu Mono', monospace;
+   font-weight: 700;
+}
+
+.posts .post {
+   transform: translateX(-20px);
+   opacity: 0;
+   transition: all 0.5s;
+}
+
+.posts .post:nth-child(2n) {
+   transition: all 0.8s;
+}
+
+.posts .post.active {
+   transform: translateX(0px);
+   opacity: 1;
+}
+
+@media(max-width:1100px){
+   .posts .post {
+      width: 100%;
+   }
+   .posts .post:nth-child(2n) {
+      transition: all 0.5s;
+   }
+}
+
+/* ─── BLOG META BAR ──────────────────── */
+.blog-meta-bar {
+   max-width: 1100px;
+   margin: 24px auto 8px;
+   padding: 0 20px;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   font-family: 'Josefin Sans', sans-serif;
+   font-size: 0.9rem;
+   color: #666;
+}
+
+.blog-meta-actions {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+}
+
+.blog-sort-label {
+   display: flex;
+   align-items: center;
+   gap: 6px;
+   background-color: white;
+   border: 1px solid rgba(0, 0, 0, 0.18);
+   border-radius: 6px;
+   padding: 5px 12px;
+   font-size: 0.85rem;
+   color: #444;
+}
+
+/* ─── Feature 6: KATEGORİ FİLTRE ───────── */
+.category-filter-bar {
+   max-width: 1100px;
+   margin: 0 auto 6px;
+   padding: 0 20px;
+   display: flex;
+   gap: 8px;
+   flex-wrap: wrap;
+}
+
+.cat-filter-btn {
+   padding: 6px 16px;
+   border: 1px solid rgba(0,0,0,0.2);
+   border-radius: 20px;
+   background: white;
+   font-family: 'Josefin Sans', sans-serif;
+   font-size: 0.82rem;
+   cursor: pointer;
+   transition: all 0.2s;
+   color: #444;
+}
+.cat-filter-btn:hover { background: #f5f5f5; }
+.cat-filter-btn.active {
+   background: black;
+   color: white;
+   border-color: black;
+}
+
+/* ─── Feature 2 & 3: SAYAÇ BARI ────── */
+.post-stat-bar {
+   display: flex;
+   gap: 14px;
+   padding: 8px 10px 4px;
+   font-family: 'Josefin Sans', sans-serif;
+   font-size: 0.82rem;
+   color: #888;
+}
+.post-stat-bar span {
+   display: flex;
+   align-items: center;
+   gap: 5px;
+}
+
+/* ─── Feature 6: BADGE CATEGORY (blog) ─ */
+.badge-category {
+   display: inline-flex;
+   align-items: center;
+   background: #f0f0f0;
+   border: 1px solid rgba(0,0,0,0.12);
+   border-radius: 20px;
+   padding: 3px 11px;
+   font-family: 'Josefin Sans', sans-serif;
+   font-size: 0.78rem;
+   color: #444;
+}
+
+/* ─── Feature 5: ÖÇNE ÇIKAN BADGE ───── */
+.badge-featured {
+   display: inline-flex;
+   align-items: center;
+   gap: 4px;
+   background: #fff9c4;
+   border: 1px solid #f9a825;
+   border-radius: 20px;
+   padding: 3px 11px;
+   font-family: 'Josefin Sans', sans-serif;
+   font-size: 0.78rem;
+   color: #e65100;
+}
+
+/* ─── Feature 7: BÜLTEN (sidebar) ───── */
+.newsletter-area p {
+   font-family: 'Arvo', serif;
+   font-size: 0.88rem;
+   color: #666;
+   margin-bottom: 12px;
+   line-height: 1.5;
+}
+.newsletter-form {
+   display: flex;
+   flex-direction: column;
+   gap: 8px;
+}
+.newsletter-form input {
+   width: 100%;
+   border: 1px solid rgba(0,0,0,0.18);
+   border-radius: 8px;
+   padding: 9px 12px;
+   font-family: 'Arvo', serif;
+   font-size: 0.88rem;
+   outline: none;
+   background: white;
+}
+.newsletter-form button {
+   background: black;
+   color: white;
+   border: none;
+   border-radius: 8px;
+   padding: 9px 16px;
+   font-family: 'Josefin Sans', sans-serif;
+   font-size: 0.88rem;
+   cursor: pointer;
+   transition: background 0.2s;
+}
+.newsletter-form button:hover { background: #333; }
+
+/* ─── OKUMA SÜRESİ ROZET ─────────────── */
+.post-badges {
+   margin-bottom: 8px;
+}
+
+.badge-readtime {
+   display: inline-flex;
+   align-items: center;
+   gap: 5px;
+   background-color: #f5f5f5;
+   border: 1px solid rgba(0, 0, 0, 0.1);
+   border-radius: 20px;
+   padding: 3px 11px;
+   font-family: 'Josefin Sans', sans-serif;
+   font-size: 0.78rem;
+   color: #555;
+}

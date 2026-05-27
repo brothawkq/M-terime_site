@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="../public/css/index.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+   <title>İletişim — Toprak Arda Duman</title>
+</head>
+
+<body>
+
+<div class="topbar">
+   <div class="wrapper target">
+      <div class="left">
+         <a href="#" target="_blank"><i class="fa-brands fa-square-x-twitter"></i></a>
+         <a href="https://www.instagram.com/toprakarda62?igsh=MWpqdGJwZDV3MHMydQ==" target="_blank"><i class="fa-brands fa-square-instagram"></i></a>
+         <a href="#" target="_blank"><i class="fa-brands fa-square-facebook"></i></a>
+         <a href="#" target="_blank"><i class="fa-brands fa-square-pinterest"></i></a>
+      </div>
+      <div class="center">
+         <a href="../index.html">ANA SAYFA</a>
+         <a href="./blog.html">BLOG</a>
+         <a href="./contact.html">İLETİŞİM</a>
+         <a href="./login.html">GİRİŞ</a>
+      </div>
+      <div class="right">
+         <span>
+            <img src="../public/img/user-1.png" alt="kullanıcı">
+         </span>
+         <div class="searchEngine" id="searchEngine">
+            <input type="text" placeholder="Ara...">
+            <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i>
+         </div>
+      </div>
+   </div>
+</div>
+
+<!-- HEADER — register.jpg arka planı -->
+<header class="header target">
+   <img src="../public/img/register.jpg" alt="iletişim">
+   <h1>İletişim</h1>
+   <h3>Seninle Konuşmaktan Mutluluk Duyarım</h3>
+</header>
+
+<!-- İLETİŞİM SAYFASI — 2 sütun -->
+<div class="contact-page-layout">
+
+   <!-- SOL: Bilgiler -->
+   <div class="contact-info-section target">
+      <div class="contact-card">
+
+         <h1>İletişim</h1>
+         <p class="contact-subtitle">Bir şeyler söylemek ister misin? Seninle konuşmaktan mutluluk duyarım.</p>
+
+         <div class="contact-info-item">
+            <i class="fa-solid fa-user"></i>
+            <span>Toprak Arda Duman</span>
+         </div>
+
+         <div class="contact-info-item">
+            <i class="fa-solid fa-envelope"></i>
+            <a href="mailto:toprakardaduman2005@icloud.com">toprakardaduman2005@icloud.com</a>
+         </div>
+
+         <div class="contact-info-item">
+            <i class="fa-brands fa-instagram"></i>
+            <a href="https://www.instagram.com/toprakarda62?igsh=MWpqdGJwZDV3MHMydQ==" target="_blank">@toprakarda62</a>
+         </div>
+
+         <div class="contact-info-item">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>İstanbul, Türkiye</span>
+         </div>
+
+         <a class="contact-back-btn" href="../index.html">← Ana Sayfaya Dön</a>
+
+      </div>
+   </div>
+
+   <!-- SAĞ: Harita -->
+   <div class="contact-map-section target">
+      <div class="map-label">
+         <i class="fa-solid fa-map-location-dot"></i> Konum: İstanbul, Türkiye
+      </div>
+      <iframe
+         src="https://www.openstreetmap.org/export/embed.html?bbox=28.7284%2C40.8682%2C29.2136%2C41.2052&amp;layer=mapnik&amp;marker=41.0082%2C28.9784"
+         title="İstanbul Haritası"
+         loading="lazy"
+         allowfullscreen>
+      </iframe>
+   </div>
+
+</div>
+
+<!-- ─── MESAJ FORMU (Feature 1: İletişim Formu) ─────────────────────── -->
+<section class="contact-form-section target">
+   <h2><i class="fa-regular fa-envelope"></i> Mesaj Gönder</h2>
+   <p>Sorularınızı, önerilerinizi veya sadece merhaba demek için formu doldurun.</p>
+
+   <form id="contactForm" class="contact-form">
+      <div class="cf-row">
+         <div class="cf-group">
+            <input type="text" id="cfName" placeholder="Adınız *" required>
+         </div>
+         <div class="cf-group">
+            <input type="email" id="cfEmail" placeholder="E-posta Adresiniz *" required>
+         </div>
+      </div>
+      <div class="cf-group">
+         <input type="text" id="cfSubject" placeholder="Konu">
+      </div>
+      <div class="cf-group">
+         <textarea id="cfMessage" placeholder="Mesajınız *" required></textarea>
+      </div>
+      <button type="submit" id="cfSubmit">
+         <i class="fa-solid fa-paper-plane"></i> Gönder
+      </button>
+   </form>
+
+   <div id="cfSuccess" class="cf-success" style="display:none">
+      <i class="fa-solid fa-circle-check"></i>
+      Mesajınız iletildi! En kısa sürede yanıt vereceğim.
+   </div>
+</section>
+
+<script src="../public/js/search.js"></script>
+<script src="../public/js/scroll.js"></script>
+
+<!-- FIREBASE: İletişim Formu -->
+<script type="module">
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+   import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+   const firebaseConfig = {
+      apiKey: "AIzaSyBk9mcH4cFoF5Er6zKB6oanooO6ZYT3_Vc",
+      authDomain: "blog-5a0b5.firebaseapp.com",
+      projectId: "blog-5a0b5",
+      storageBucket: "blog-5a0b5.firebasestorage.app",
+      messagingSenderId: "798568666109",
+      appId: "1:798568666109:web:128224277ce71b4ab1bf94",
+      measurementId: "G-H56W0VWLS9"
+   };
+
+   const app = initializeApp(firebaseConfig);
+   const db  = getFirestore(app);
+
+   document.getElementById("contactForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("cfSubmit");
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Gönderiliyor...';
+
+      const name    = document.getElementById("cfName").value.trim();
+      const email   = document.getElementById("cfEmail").value.trim();
+      const subject = document.getElementById("cfSubject").value.trim() || "(Konu belirtilmedi)";
+      const message = document.getElementById("cfMessage").value.trim();
+
+      try {
+         await addDoc(collection(db, "messages"), {
+            name, email, subject, message,
+            date: new Date().toLocaleDateString("tr-TR"),
+            time: new Date().toLocaleTimeString("tr-TR"),
+            read: false
+         });
+         document.getElementById("contactForm").style.display = "none";
+         document.getElementById("cfSuccess").style.display   = "flex";
+      } catch (err) {
+         alert("Hata oluştu: " + err.message);
+         btn.disabled = false;
+         btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Gönder';
+      }
+   });
+</script>
+
+</body>
+</html>

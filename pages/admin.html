@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="../public/css/index.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+   <title>Yönetim Paneli — Toprak Arda Duman</title>
+   <style>
+      /* ── GENEL ─────────────────────────────── */
+      .admin {
+         max-width: 940px;
+         margin: 36px auto 60px;
+         padding: 0 20px;
+      }
+      .admin-header {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         margin-bottom: 28px;
+      }
+      .admin-header h1 {
+         font-family: 'Pacifico', cursive;
+         font-size: 2rem;
+      }
+      .btn-signout {
+         background-color: #f44336;
+         color: white;
+         border: none;
+         padding: 8px 18px;
+         border-radius: 6px;
+         cursor: pointer;
+         font-family: 'Josefin Sans', sans-serif;
+         font-size: 0.9rem;
+         display: flex;
+         align-items: center;
+         gap: 6px;
+         transition: background-color 0.2s;
+      }
+      .btn-signout:hover { background-color: #d32f2f; }
+
+      /* ── Feature 9: İSTATİSTİKLER ─────────── */
+      .stats-bar {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+         gap: 14px;
+         margin-bottom: 28px;
+      }
+      .stat-card {
+         background: white;
+         border: 1px solid rgba(0,0,0,0.13);
+         border-radius: 12px;
+         padding: 16px 14px;
+         text-align: center;
+      }
+      .stat-card .stat-num {
+         font-family: 'Pacifico', cursive;
+         font-size: 1.8rem;
+         display: block;
+         margin-bottom: 4px;
+      }
+      .stat-card .stat-label {
+         font-family: 'Josefin Sans', sans-serif;
+         font-size: 0.78rem;
+         color: #666;
+         text-transform: uppercase;
+         letter-spacing: 0.5px;
+      }
+      .stat-card i {
+         font-size: 1.1rem;
+         margin-right: 4px;
+         color: #555;
+      }
+
+      /* ── TABS ──────────────────────────────── */
+      .admin-tabs {
+         display: flex;
+         gap: 6px;
+         margin-bottom: 20px;
+         flex-wrap: wrap;
+      }
+      .tab-btn {
+         padding: 8px 18px;
+         border: 1px solid rgba(0,0,0,0.2);
+         border-radius: 8px;
+         background: white;
+         font-family: 'Josefin Sans', sans-serif;
+         font-size: 0.88rem;
+         cursor: pointer;
+         transition: all 0.2s;
+         display: flex;
+         align-items: center;
+         gap: 6px;
+      }
+      .tab-btn:hover { background: #f5f5f5; }
+      .tab-btn.active {
+         background: black;
+         color: white;
+         border-color: black;
+      }
+      .tab-badge {
+         background: #f44336;
+         color: white;
+         border-radius: 50%;
+         width: 18px;
+         height: 18px;
+         font-size: 0.7rem;
+         display: inline-flex;
+         align-items: center;
+         justify-content: center;
+      }
+      .tab-content { display: none; }
+      .tab-content.active { display: block; }
+
+      /* ── YAZILLAR ──────────────────────────── */
+      .new-post-toggle {
+         width: 100%;
+         padding: 10px;
+         background: lightgreen;
+         border: none;
+         border-radius: 10px;
+         font-family: 'Josefin Sans', sans-serif;
+         font-size: 1rem;
+         cursor: pointer;
+         margin-bottom: 16px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         gap: 8px;
+         transition: opacity 0.2s;
+      }
+      .new-post-toggle:hover { opacity: 0.8; }
+
+      .new-post-form {
+         display: none;
+         background: white;
+         border: 1px solid rgba(0,0,0,0.18);
+         border-radius: 12px;
+         padding: 22px;
+         margin-bottom: 24px;
+      }
+      .new-post-form.open { display: block; }
+
+      .new-post-form input,
+      .new-post-form textarea,
+      .new-post-form select {
+         width: 100%;
+         border: 1px solid rgba(0,0,0,0.18);
+         border-radius: 8px;
+         padding: 10px 12px;
+         font-family: 'Arvo', serif;
+         font-size: 0.95rem;
+         margin-bottom: 12px;
+         outline: none;
+         background: white;
+      }
+      .new-post-form textarea { height: 160px; resize: vertical; }
+      .form-actions {
+         display: flex;
+         gap: 10px;
+         align-items: center;
+         flex-wrap: wrap;
+      }
+      .btn-publish {
+         background: lightgreen;
+         border: none;
+         border-radius: 8px;
+         padding: 10px 22px;
+         font-family: 'Josefin Sans', sans-serif;
+         font-size: 0.9rem;
+         cursor: pointer;
+         display: flex;
+         align-items: center;
+         gap: 6px;
+         transition: opacity 0.2s;
+      }
+      .btn-publish:hover { opacity: 0.8; }
+      .btn-img-label {
+         background: rgb(255,231,159);
+         border: none;
+         border-radius: 8px;
+         padding: 10px 16px;
+         font-family: 'Josefin Sans', sans-serif;
+         font-size: 0.9rem;
+         cursor: pointer;
+         display: flex;
+         align-items: center;
+         gap: 6px;
+         transition: opacity 0.2s;
+      }
+      .btn-img-label:hover { opacity: 0.8; }
+      #imgPreview {
+         max-height: 110px;
+         border-radius: 8px;
+         display: none;
+         margin-bottom: 12px;
+      }
+
+      .admin-post {
+         background: white;
+         border: 1px solid rgba(0,0,0,0.15);
+         border-radius: 10px;
+         padding: 14px 18px;
+         margin-bottom: 12px;
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         gap: 10px;
+      }
+      .admin-post.is-featured {
+         border-left: 4px solid #f9a825;
+      }
+      .post-info h3 {
+         font-family: 'Pacifico', cursive;
+         font-size: 1rem;
+         margin-bottom: 4px;
+      }
+      .post-info .meta {
+         font-family: 'Josefin Sans', sans-serif;
+         font-size: 0.82rem;
+         color: #666;
+         display: flex;
+         gap: 10px;
+         flex-wrap: wrap;
+      }
+      .meta-cat {
+         background: #f0f0f0;
+         border-radius: 4px;
+         padding: 1px 7px;
+         font-size: 0.78rem;
+      }
+      .actions {
+         display: flex;
+         gap: 7px;
+         flex-shrink: 0;
+      }
+      .actions button {
+         width: 36px;
+         height: 36px;
+         border: none;
+         border-radius: 50%;
+         cursor: pointer;
+         font-size: 0.88rem;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         transition: opacity 0.2s;
+      }
+      .actions button:hover { opacity: 0.7; }
+      .btn-edit    { background: rgb(255,231,159); }
+      .btn-delete  { background: #ffcdd2; }
+      .btn-feature { background: #fff9c4; }
+      .btn-feature.active { background: #f9a825; color: white; }
+
+      #loadingMsg {
+         text-align: center;
+         padding: 30px;
+         font-family: 'Josefin Sans', sans-serif;
+         color: #999;
+      }
+
+      /* ── Feature 8: MESAJLAR ────────────────── */
+      .comment-admin-card {
+         background: white;
+         border: 1px solid rgba(0,0,0,0.12);
+         border-radius: 10px;
+         padding: 16px 20px;
+         margin-bottom: 12px;
+      }
+      .comment-admin-card .ca-meta {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         margin-bottom: 4px;
+      }
+      .comment-admin-card .ca-name {
+         font-family: 'Dancing Script', cursive;
+         font-size: 1.05rem;
+         font-weight: 700;
+      }
+      .comment-admin-card .ca-post {
+         font-family: 'Josefin Sans', sans-serif;
+         font-size: 0.75rem;
+         color: #888;
+         margin-bottom: 6px;
+      }
+      .comment-admin-card .ca-text {
+         font-family: 'Arvo', serif;
+         font-size: 0.88rem;
+         color: #333;
+         margin-bottom: 10px;
+      }
+      .comment-admin-card .ca-reply-box {
+         background: #f5f5f5;
+         border-radius: 8px;
+         padding: 10px 12px;
+         margin-bottom: 10px;
+         font-family: 'Josefin Sans', sans-serif;
+         font-size: 0.82rem;
+         color: #1b5e20;
+         border-left: 3px solid #2e7d32;
+      }
+      .comment-admin-card textarea.ca-reply-input {
+         width: 100%;
+         border: 1px solid rgba(0,0,0,0.18);
+         border-radius: 8px;
+         padding: 9px 12px;
+         font-family: 'Arvo', serif;
+         font-size: 0.88rem;
+         height: 70px;
+         resize: vertical;
+         outline: none;
+         display: none;
+      }
+      .comment-admin-card .ca-actions {
+         display: flex;
+         gap: 8px;
+         margin-top: 8px;
+      }
+      .btn-ca-reply  { background: #1565c0; color: white; border: none; border-radius: 7px; padding: 7px 16px; font-size: 0.82rem; cursor: pointer; }
+      .btn-ca-send   { background: #2e7d32; color: white; border: none; border-radius: 7px; padding: 7px 16px; font-size: 0.82rem; cursor: pointer; display: none; }
+      .btn-ca-delete { background: #e53935; color: white; border: none; border-radius: 7px; padding: 7px 14px; font-size: 0.82rem; cursor: pointer; }
+
+      .message-card {
+         background: white;
+         border: 1px solid rgba(0,0,0,0.15);
+         border-radius: 10px;
+         padding: 16px 20px;
+         margin-bottom: 12px;
+         cursor: pointer;
+         transition: background 0.2s;
+      }
+      .message-card.unread {
+         border-left: 4px solid #1976d2;
+      }
+      .message-card:hover { background: #fafafa; }
+      .msg-header {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         margin-bottom: 6px;
+      }
+      .msg-sender {
+         font-family: 'Dancing Script', cursive;
+         font-size: 1.1rem;
+         font-weight: 700;
+      }
+      .msg-date {
+         font-family: 'Ubuntu Mono', monospace;
+         font-size: 0.8rem;
+         color: #888;
+      }
+      .msg-subject {
+         font-family: 'Josefin Sans', sans-serif;
+         font-size: 0.88rem;
+         font-weight: 600;
+         margin-bottom: 4px;
+         color: #333;
+      }
+      .msg-preview {
+         font-family: 'Arvo', serif;
+         font-size: 0.85rem;
+         color: #666;
+         overflow: hidden;
+         text-overflow: ellipsis;
+         white-space: nowrap;
+      }
+      .msg-full {
+         display: none;
+         margin-top: 10px;
+         padding-top: 10px;
+         border-top: 1px solid rgba(0,0,0,0.1);
+         font-family: 'Arvo', serif;
+         font-size: 0.9rem;
+         color: #444;
+         line-height: 1.6;
+         white-space: pre-wrap;
+      }
+      .msg-email-link {
+         margin-top: 8px;
+         display: block;
+         font-family: 'Josefin Sans', sans-serif;
+         font-size: 0.85rem;
+         color: #1976d2;
+      }
+      .unread-dot {
+         width: 8px;
+         height: 8px;
+         background: #1976d2;
+         border-radius: 50%;
+         display: inline-block;
+         margin-right: 6px;
+      }
+
+      /* ── Feature 7: BÜLTEN ─────────────────── */
+      .subscriber-item {
+         background: white;
+         border: 1px solid rgba(0,0,0,0.12);
+         border-radius: 8px;
+         padding: 12px 16px;
+         margin-bottom: 8px;
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         font-family: 'Josefin Sans', sans-serif;
+         font-size: 0.9rem;
+      }
+      .subscriber-item .sub-date {
+         font-family: 'Ubuntu Mono', monospace;
+         font-size: 0.8rem;
+         color: #888;
+      }
+
+      /* ── Feature 10: PROFİL ─────────────────── */
+      .profile-form input,
+      .profile-form textarea {
+         width: 100%;
+         border: 1px solid rgba(0,0,0,0.18);
+         border-radius: 8px;
+         padding: 10px 12px;
+         font-family: 'Arvo', serif;
+         font-size: 0.95rem;
+         margin-bottom: 14px;
+         outline: none;
+         background: white;
+      }
+      .profile-form textarea { height: 90px; resize: vertical; }
+      .int-block { border: 1px solid rgba(0,0,0,0.1); border-radius: 10px; padding: 14px 14px 6px; margin-bottom: 14px; }
+      .int-block-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #777; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+      .int-block input, .int-block textarea { margin-bottom: 10px; }
+      .icon-picker { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 10px; }
+      .icon-picker span { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: 1.5px solid rgba(0,0,0,0.12); border-radius: 8px; cursor: pointer; font-size: 1rem; transition: background 0.15s, border-color 0.15s; }
+      .icon-picker span:hover { background: #f0f0f0; }
+      .icon-picker span.selected { background: #111; color: white; border-color: #111; }
+      .btn-save-profile {
+         background: black;
+         color: white;
+         border: none;
+         border-radius: 8px;
+         padding: 11px 28px;
+         font-family: 'Josefin Sans', sans-serif;
+         font-size: 0.95rem;
+         cursor: pointer;
+         transition: background 0.2s;
+      }
+      .btn-save-profile:hover { background: #333; }
+      .profile-saved-msg {
+         display: none;
+         color: green;
+         font-family: 'Josefin Sans', sans-serif;
+         font-size: 0.9rem;
+         margin-top: 8px;
+      }
+
+      .section-label {
+         font-family: 'Josefin Sans', sans-serif;
+         font-size: 0.8rem;
+         text-transform: uppercase;
+         letter-spacing: 0.8px;
+         color: #888;
+         margin-bottom: 14px;
+      }
+      .empty-msg {
+         text-align: center;
+         padding: 30px;
+         font-family: 'Josefin Sans', sans-serif;
+         color: #aaa;
+         font-size: 0.9rem;
+      }
+   </style>
+</head>
+
+<body>
+
+   <div class="topbar">
+      <div class="wrapper target">
+         <div class="left">
+            <a href="#" target="_blank"><i class="fa-brands fa-square-x-twitter"></i></a>
+            <a href="https://www.instagram.com/toprakarda62?igsh=MWpqdGJwZDV3MHMydQ==" target="_blank"><i class="fa-brands fa-square-instagram"></i></a>
+            <a href="#" target="_blank"><i class="fa-brands fa-square-facebook"></i></a>
+            <a href="#" target="_blank"><i class="fa-brands fa-square-pinterest"></i></a>
+         </div>
+         <div class="center">
+            <a href="../index.html">ANA SAYFA</a>
+            <a href="./blog.html">BLOG</a>
+            <a href="./contact.html">İLETİŞİM</a>
+            <a href="./login.html">GİRİŞ</a>
+         </div>
+         <div class="right">
+            <span><img src="../public/img/user-1.png" alt="kullanıcı"></span>
+         </div>
+      </div>
+   </div>
+
+   <div class="admin">
+
+      <!-- Başlık + Çıkış -->
+      <div class="admin-header">
+         <h1>Yönetim Paneli</h1>
+         <button class="btn-signout" id="signOutBtn">
+            <i class="fa-solid fa-right-from-bracket"></i> Çıkış Yap
+         </button>
+      </div>
+
+      <!-- Feature 9: İSTATİSTİKLER -->
+      <div class="stats-bar" id="statsBar">
+         <div class="stat-card">
+            <span class="stat-num" id="statPosts">—</span>
+            <span class="stat-label"><i class="fa-solid fa-file-alt"></i> Yazı</span>
+         </div>
+         <div class="stat-card">
+            <span class="stat-num" id="statViews">—</span>
+            <span class="stat-label"><i class="fa-regular fa-eye"></i> Görüntülenme</span>
+         </div>
+         <div class="stat-card">
+            <span class="stat-num" id="statLikes">—</span>
+            <span class="stat-label"><i class="fa-regular fa-heart"></i> Beğeni</span>
+         </div>
+         <div class="stat-card">
+            <span class="stat-num" id="statMessages">—</span>
+            <span class="stat-label"><i class="fa-regular fa-envelope"></i> Mesaj</span>
+         </div>
+         <div class="stat-card">
+            <span class="stat-num" id="statSubscribers">—</span>
+            <span class="stat-label"><i class="fa-regular fa-bell"></i> Abone</span>
+         </div>
+         <div class="stat-card">
+            <span class="stat-num" id="statComments">—</span>
+            <span class="stat-label"><i class="fa-regular fa-comments"></i> Yorum</span>
+         </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="admin-tabs">
+         <button class="tab-btn active" data-tab="posts">
+            <i class="fa-solid fa-file-alt"></i> Yazılar
+         </button>
+         <button class="tab-btn" data-tab="messages">
+            <i class="fa-regular fa-envelope"></i> Mesajlar
+            <span class="tab-badge" id="unreadBadge" style="display:none">0</span>
+         </button>
+         <button class="tab-btn" data-tab="newsletter">
+            <i class="fa-regular fa-bell"></i> Bülten
+         </button>
+         <button class="tab-btn" data-tab="comments">
+            <i class="fa-regular fa-comments"></i> Yorumlar
+            <span class="tab-badge" id="commentBadge" style="display:none">0</span>
+         </button>
+         <button class="tab-btn" data-tab="profile">
+            <i class="fa-solid fa-user-pen"></i> Profil
+         </button>
+      </div>
+
+      <!-- TAB: YAZILLAR -->
+      <div class="tab-content active" id="tab-posts">
+
+         <button class="new-post-toggle" id="toggleNewPost">
+            <i class="fa-solid fa-plus"></i> Yeni Yazı
+         </button>
+
+         <!-- Feature 6: KATEGORİ alanı eklendi -->
+         <div class="new-post-form" id="newPostForm">
+            <input  type="text" id="npTitle"   placeholder="Başlık *" required>
+            <textarea              id="npContent" placeholder="İçerik *" required></textarea>
+            <input  type="text" id="npAuthor"  placeholder="Yazar *" required>
+            <select id="npCategory">
+               <option value="">Kategori Seç (isteğe bağlı)</option>
+               <option value="Sanat">Sanat</option>
+               <option value="Tasarım">Tasarım</option>
+               <option value="Yazarlık">Yazarlık</option>
+               <option value="Kültür">Kültür</option>
+               <option value="Yaşam">Yaşam</option>
+               <option value="Diğer">Diğer</option>
+            </select>
+            <img id="imgPreview" src="" alt="Önizleme">
+            <div class="form-actions">
+               <label class="btn-img-label" for="npImage">
+                  <i class="fa-solid fa-image"></i> Fotoğraf Seç
+               </label>
+               <input type="file" id="npImage" accept="image/*" style="display:none">
+               <button class="btn-publish" id="publishBtn">
+                  <i class="fa-solid fa-paper-plane"></i> Yayımla
+               </button>
+            </div>
+         </div>
+
+         <p class="section-label">Tüm Yazılar</p>
+         <div id="loadingMsg">Yükleniyor...</div>
+         <div id="postList"></div>
+      </div>
+
+      <!-- TAB: Feature 8: MESAJLAR -->
+      <div class="tab-content" id="tab-messages">
+         <p class="section-label">Gelen Mesajlar</p>
+         <div id="messageList"><div class="empty-msg">Yükleniyor...</div></div>
+      </div>
+
+      <!-- TAB: YORUMLAR -->
+      <div class="tab-content" id="tab-comments">
+         <p class="section-label">Tüm Yorumlar</p>
+         <div id="commentAdminList"><div class="empty-msg">Yükleniyor...</div></div>
+      </div>
+
+      <!-- TAB: Feature 7: BÜLTEN ABONELERİ -->
+      <div class="tab-content" id="tab-newsletter">
+         <p class="section-label">E-posta Aboneleri</p>
+         <div id="subscriberList"><div class="empty-msg">Yükleniyor...</div></div>
+      </div>
+
+      <!-- TAB: Feature 10: PROFİL YÖNETİMİ -->
+      <div class="tab-content" id="tab-profile">
+         <p class="section-label">Anasayfa Profil Bilgileri</p>
+         <form class="profile-form" id="profileForm">
+
+            <!-- FOTOĞRAFLAR -->
+            <p style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#555;margin-bottom:10px">Fotoğraflar</p>
+            <div class="int-block" style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+               <div style="text-align:center">
+                  <p style="font-size:0.78rem;color:#777;margin-bottom:6px">Hero (Ana Sayfa)</p>
+                  <img id="heroPhotoPreview" src="../public/img/user-2.png" style="width:80px;height:80px;object-fit:cover;border-radius:50%;border:2px solid #ddd;display:block;margin:0 auto 8px">
+                  <input type="file" id="heroPhotoFile" accept="image/*" style="font-size:0.78rem;width:100%">
+                  <button type="button" id="uploadHeroBtn" class="btn-save-profile" style="margin-top:6px;padding:7px 14px;font-size:0.78rem">Yükle</button>
+                  <p id="heroUploadMsg" style="display:none;font-size:0.75rem;color:green;margin-top:4px">✓ Yüklendi!</p>
+                  <input type="hidden" id="pfHeroPhotoUrl">
+               </div>
+               <div style="text-align:center">
+                  <p style="font-size:0.78rem;color:#777;margin-bottom:6px">Blog Yazar Fotoğrafı</p>
+                  <img id="blogPhotoPreview" src="../public/img/user-2.png" style="width:80px;height:80px;object-fit:cover;border-radius:50%;border:2px solid #ddd;display:block;margin:0 auto 8px">
+                  <input type="file" id="blogPhotoFile" accept="image/*" style="font-size:0.78rem;width:100%">
+                  <button type="button" id="uploadBlogBtn" class="btn-save-profile" style="margin-top:6px;padding:7px 14px;font-size:0.78rem">Yükle</button>
+                  <p id="blogUploadMsg" style="display:none;font-size:0.75rem;color:green;margin-top:4px">✓ Yüklendi!</p>
+                  <input type="hidden" id="pfBlogPhotoUrl">
+               </div>
+               <div style="text-align:center">
+                  <p style="font-size:0.78rem;color:#777;margin-bottom:6px">Hakkımda Fotoğrafı</p>
+                  <img id="aboutPhotoPreview" src="../public/img/team-1.jpg" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid #ddd;display:block;margin:0 auto 8px">
+                  <input type="file" id="aboutPhotoFile" accept="image/*" style="font-size:0.78rem;width:100%">
+                  <button type="button" id="uploadAboutBtn" class="btn-save-profile" style="margin-top:6px;padding:7px 14px;font-size:0.78rem">Yükle</button>
+                  <p id="aboutUploadMsg" style="display:none;font-size:0.75rem;color:green;margin-top:4px">✓ Yüklendi!</p>
+                  <input type="hidden" id="pfAboutPhotoUrl">
+               </div>
+               <div style="text-align:center">
+                  <p style="font-size:0.78rem;color:#777;margin-bottom:6px">Hero Arka Plan</p>
+                  <img id="heroBgPreview" src="../public/img/login.jpg" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid #ddd;display:block;margin:0 auto 8px">
+                  <input type="file" id="heroBgFile" accept="image/*" style="font-size:0.78rem;width:100%">
+                  <button type="button" id="uploadHeroBgBtn" class="btn-save-profile" style="margin-top:6px;padding:7px 14px;font-size:0.78rem">Yükle</button>
+                  <p id="heroBgUploadMsg" style="display:none;font-size:0.75rem;color:green;margin-top:4px">✓ Yüklendi!</p>
+                  <input type="hidden" id="pfHeroBgUrl">
+               </div>
+            </div>
+
+            <input type="text" id="pfName" placeholder="İsim (ör: Toprak Arda Duman)">
+            <input type="text" id="pfTitle" placeholder="Unvan (ör: Sanatçı &amp; Blog Yazarı)">
+            <textarea id="pfBio1" placeholder="Biyografi — 1. paragraf"></textarea>
+            <textarea id="pfBio2" placeholder="Biyografi — 2. paragraf (isteğe bağlı)"></textarea>
+
+            <p style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#555;margin:18px 0 10px">İlgi Alanları</p>
+
+            <!-- İlgi Alanı 1 -->
+            <div class="int-block">
+               <div class="int-block-label"><i class="fa-solid fa-palette" id="pfInt1Preview"></i> İlgi Alanı 1</div>
+               <div class="icon-picker" data-target="pfInt1Icon">
+                  <span data-icon="fa-palette" title="Sanat"><i class="fa-solid fa-palette"></i></span>
+                  <span data-icon="fa-pen-nib" title="Tasarım"><i class="fa-solid fa-pen-nib"></i></span>
+                  <span data-icon="fa-feather-pointed" title="Yazarlık"><i class="fa-solid fa-feather-pointed"></i></span>
+                  <span data-icon="fa-earth-europe" title="Kültür"><i class="fa-solid fa-earth-europe"></i></span>
+                  <span data-icon="fa-music" title="Müzik"><i class="fa-solid fa-music"></i></span>
+                  <span data-icon="fa-camera" title="Fotoğraf"><i class="fa-solid fa-camera"></i></span>
+                  <span data-icon="fa-book" title="Okuma"><i class="fa-solid fa-book"></i></span>
+                  <span data-icon="fa-code" title="Yazılım"><i class="fa-solid fa-code"></i></span>
+                  <span data-icon="fa-gamepad" title="Oyun"><i class="fa-solid fa-gamepad"></i></span>
+                  <span data-icon="fa-film" title="Sinema"><i class="fa-solid fa-film"></i></span>
+                  <span data-icon="fa-dumbbell" title="Spor"><i class="fa-solid fa-dumbbell"></i></span>
+                  <span data-icon="fa-plane" title="Seyahat"><i class="fa-solid fa-plane"></i></span>
+                  <span data-icon="fa-utensils" title="Yemek"><i class="fa-solid fa-utensils"></i></span>
+                  <span data-icon="fa-leaf" title="Doğa"><i class="fa-solid fa-leaf"></i></span>
+                  <span data-icon="fa-graduation-cap" title="Eğitim"><i class="fa-solid fa-graduation-cap"></i></span>
+                  <span data-icon="fa-microphone" title="Podcast"><i class="fa-solid fa-microphone"></i></span>
+               </div>
+               <input type="hidden" id="pfInt1Icon" value="fa-palette">
+               <input type="text" id="pfInt1Title" placeholder="Başlık (ör: Yazılım)">
+               <textarea id="pfInt1Desc" placeholder="Açıklama"></textarea>
+            </div>
+
+            <!-- İlgi Alanı 2 -->
+            <div class="int-block">
+               <div class="int-block-label"><i class="fa-solid fa-pen-nib" id="pfInt2Preview"></i> İlgi Alanı 2</div>
+               <div class="icon-picker" data-target="pfInt2Icon">
+                  <span data-icon="fa-palette" title="Sanat"><i class="fa-solid fa-palette"></i></span>
+                  <span data-icon="fa-pen-nib" title="Tasarım"><i class="fa-solid fa-pen-nib"></i></span>
+                  <span data-icon="fa-feather-pointed" title="Yazarlık"><i class="fa-solid fa-feather-pointed"></i></span>
+                  <span data-icon="fa-earth-europe" title="Kültür"><i class="fa-solid fa-earth-europe"></i></span>
+                  <span data-icon="fa-music" title="Müzik"><i class="fa-solid fa-music"></i></span>
+                  <span data-icon="fa-camera" title="Fotoğraf"><i class="fa-solid fa-camera"></i></span>
+                  <span data-icon="fa-book" title="Okuma"><i class="fa-solid fa-book"></i></span>
+                  <span data-icon="fa-code" title="Yazılım"><i class="fa-solid fa-code"></i></span>
+                  <span data-icon="fa-gamepad" title="Oyun"><i class="fa-solid fa-gamepad"></i></span>
+                  <span data-icon="fa-film" title="Sinema"><i class="fa-solid fa-film"></i></span>
+                  <span data-icon="fa-dumbbell" title="Spor"><i class="fa-solid fa-dumbbell"></i></span>
+                  <span data-icon="fa-plane" title="Seyahat"><i class="fa-solid fa-plane"></i></span>
+                  <span data-icon="fa-utensils" title="Yemek"><i class="fa-solid fa-utensils"></i></span>
+                  <span data-icon="fa-leaf" title="Doğa"><i class="fa-solid fa-leaf"></i></span>
+                  <span data-icon="fa-graduation-cap" title="Eğitim"><i class="fa-solid fa-graduation-cap"></i></span>
+                  <span data-icon="fa-microphone" title="Podcast"><i class="fa-solid fa-microphone"></i></span>
+               </div>
+               <input type="hidden" id="pfInt2Icon" value="fa-pen-nib">
+               <input type="text" id="pfInt2Title" placeholder="Başlık">
+               <textarea id="pfInt2Desc" placeholder="Açıklama"></textarea>
+            </div>
+
+            <!-- İlgi Alanı 3 -->
+            <div class="int-block">
+               <div class="int-block-label"><i class="fa-solid fa-feather-pointed" id="pfInt3Preview"></i> İlgi Alanı 3</div>
+               <div class="icon-picker" data-target="pfInt3Icon">
+                  <span data-icon="fa-palette" title="Sanat"><i class="fa-solid fa-palette"></i></span>
+                  <span data-icon="fa-pen-nib" title="Tasarım"><i class="fa-solid fa-pen-nib"></i></span>
+                  <span data-icon="fa-feather-pointed" title="Yazarlık"><i class="fa-solid fa-feather-pointed"></i></span>
+                  <span data-icon="fa-earth-europe" title="Kültür"><i class="fa-solid fa-earth-europe"></i></span>
+                  <span data-icon="fa-music" title="Müzik"><i class="fa-solid fa-music"></i></span>
+                  <span data-icon="fa-camera" title="Fotoğraf"><i class="fa-solid fa-camera"></i></span>
+                  <span data-icon="fa-book" title="Okuma"><i class="fa-solid fa-book"></i></span>
+                  <span data-icon="fa-code" title="Yazılım"><i class="fa-solid fa-code"></i></span>
+                  <span data-icon="fa-gamepad" title="Oyun"><i class="fa-solid fa-gamepad"></i></span>
+                  <span data-icon="fa-film" title="Sinema"><i class="fa-solid fa-film"></i></span>
+                  <span data-icon="fa-dumbbell" title="Spor"><i class="fa-solid fa-dumbbell"></i></span>
+                  <span data-icon="fa-plane" title="Seyahat"><i class="fa-solid fa-plane"></i></span>
+                  <span data-icon="fa-utensils" title="Yemek"><i class="fa-solid fa-utensils"></i></span>
+                  <span data-icon="fa-leaf" title="Doğa"><i class="fa-solid fa-leaf"></i></span>
+                  <span data-icon="fa-graduation-cap" title="Eğitim"><i class="fa-solid fa-graduation-cap"></i></span>
+                  <span data-icon="fa-microphone" title="Podcast"><i class="fa-solid fa-microphone"></i></span>
+               </div>
+               <input type="hidden" id="pfInt3Icon" value="fa-feather-pointed">
+               <input type="text" id="pfInt3Title" placeholder="Başlık">
+               <textarea id="pfInt3Desc" placeholder="Açıklama"></textarea>
+            </div>
+
+            <!-- İlgi Alanı 4 -->
+            <div class="int-block">
+               <div class="int-block-label"><i class="fa-solid fa-earth-europe" id="pfInt4Preview"></i> İlgi Alanı 4</div>
+               <div class="icon-picker" data-target="pfInt4Icon">
+                  <span data-icon="fa-palette" title="Sanat"><i class="fa-solid fa-palette"></i></span>
+                  <span data-icon="fa-pen-nib" title="Tasarım"><i class="fa-solid fa-pen-nib"></i></span>
+                  <span data-icon="fa-feather-pointed" title="Yazarlık"><i class="fa-solid fa-feather-pointed"></i></span>
+                  <span data-icon="fa-earth-europe" title="Kültür"><i class="fa-solid fa-earth-europe"></i></span>
+                  <span data-icon="fa-music" title="Müzik"><i class="fa-solid fa-music"></i></span>
+                  <span data-icon="fa-camera" title="Fotoğraf"><i class="fa-solid fa-camera"></i></span>
+                  <span data-icon="fa-book" title="Okuma"><i class="fa-solid fa-book"></i></span>
+                  <span data-icon="fa-code" title="Yazılım"><i class="fa-solid fa-code"></i></span>
+                  <span data-icon="fa-gamepad" title="Oyun"><i class="fa-solid fa-gamepad"></i></span>
+                  <span data-icon="fa-film" title="Sinema"><i class="fa-solid fa-film"></i></span>
+                  <span data-icon="fa-dumbbell" title="Spor"><i class="fa-solid fa-dumbbell"></i></span>
+                  <span data-icon="fa-plane" title="Seyahat"><i class="fa-solid fa-plane"></i></span>
+                  <span data-icon="fa-utensils" title="Yemek"><i class="fa-solid fa-utensils"></i></span>
+                  <span data-icon="fa-leaf" title="Doğa"><i class="fa-solid fa-leaf"></i></span>
+                  <span data-icon="fa-graduation-cap" title="Eğitim"><i class="fa-solid fa-graduation-cap"></i></span>
+                  <span data-icon="fa-microphone" title="Podcast"><i class="fa-solid fa-microphone"></i></span>
+               </div>
+               <input type="hidden" id="pfInt4Icon" value="fa-earth-europe">
+               <input type="text" id="pfInt4Title" placeholder="Başlık">
+               <textarea id="pfInt4Desc" placeholder="Açıklama"></textarea>
+            </div>
+
+            <!-- HASHTAG'LER -->
+            <p style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#555;margin:18px 0 10px">Blog Hashtag'leri <span style="font-weight:400;text-transform:none">(# olmadan yaz)</span></p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+               <input type="text" id="pfTag1" placeholder="ör: sanat">
+               <input type="text" id="pfTag2" placeholder="ör: tasarım">
+               <input type="text" id="pfTag3" placeholder="ör: resim">
+               <input type="text" id="pfTag4" placeholder="ör: kültür">
+            </div>
+
+            <!-- SOSYAL LİNKLER -->
+            <p style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#555;margin:18px 0 10px">Sosyal Bağlantılar</p>
+            <input type="url" id="pfLinkedinUrl" placeholder="LinkedIn URL (https://linkedin.com/in/...)">
+            <input type="url" id="pfGithubUrl" placeholder="GitHub URL (https://github.com/...)">
+
+            <button type="submit" class="btn-save-profile">
+               <i class="fa-solid fa-floppy-disk"></i> Kaydet
+            </button>
+            <p class="profile-saved-msg" id="profileSavedMsg">
+               <i class="fa-solid fa-check"></i> Profil güncellendi!
+            </p>
+         </form>
+      </div>
+
+   </div><!-- /.admin -->
+
+   <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+      import {
+         getFirestore,
+         collection, addDoc, getDocs,
+         doc, deleteDoc, updateDoc, getDoc, setDoc
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+         apiKey: "AIzaSyBk9mcH4cFoF5Er6zKB6oanooO6ZYT3_Vc",
+         authDomain: "blog-5a0b5.firebaseapp.com",
+         projectId: "blog-5a0b5",
+         storageBucket: "blog-5a0b5.firebasestorage.app",
+         messagingSenderId: "798568666109",
+         appId: "1:798568666109:web:128224277ce71b4ab1bf94",
+         measurementId: "G-H56W0VWLS9"
+      };
+
+      const app     = initializeApp(firebaseConfig);
+      const auth    = getAuth(app);
+      const db      = getFirestore(app);
+
+      /* ── AUTH GUARD ───────────────────────── */
+      onAuthStateChanged(auth, async (user) => {
+         if (!user) { window.location.href = "./login.html"; return; }
+         await loadAll();
+      });
+
+      /* ── ÇIKIŞ ────────────────────────────── */
+      document.getElementById("signOutBtn").addEventListener("click", async () => {
+         await signOut(auth);
+         window.location.href = "./login.html";
+      });
+
+      /* ── TAB GEÇME ───────────────────────── */
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+         btn.addEventListener("click", () => {
+            document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+            document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+            btn.classList.add("active");
+            document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+         });
+      });
+
+      /* ── FORM AÇ/KAPAT ───────────────────── */
+      document.getElementById("toggleNewPost").addEventListener("click", () => {
+         document.getElementById("newPostForm").classList.toggle("open");
+      });
+
+      /* ── FOTOĞRAF ÖNİZLEME ───────────────── */
+      document.getElementById("npImage").addEventListener("change", (e) => {
+         const file = e.target.files[0];
+         if (!file) return;
+         const reader = new FileReader();
+         reader.onload = () => {
+            const prev = document.getElementById("imgPreview");
+            prev.src = reader.result;
+            prev.style.display = "block";
+         };
+         reader.readAsDataURL(file);
+      });
+
+      /* ── YAYIMLA ─────────────────────────── */
+      document.getElementById("publishBtn").addEventListener("click", async () => {
+         const title     = document.getElementById("npTitle").value.trim();
+         const content   = document.getElementById("npContent").value.trim();
+         const author    = document.getElementById("npAuthor").value.trim();
+         const category  = document.getElementById("npCategory").value;
+         const imageFile = document.getElementById("npImage").files[0];
+
+         if (!title || !content || !author) {
+            alert("Lütfen başlık, içerik ve yazar alanlarını doldurun.");
+            return;
+         }
+
+         const btn = document.getElementById("publishBtn");
+         btn.disabled = true;
+         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Yayımlanıyor...';
+
+         let imageBase64 = "";
+         if (imageFile) {
+            const reader = new FileReader();
+            reader.readAsDataURL(imageFile);
+            await new Promise(r => { reader.onload = () => { imageBase64 = reader.result; r(); }; });
+         }
+
+         try {
+            await addDoc(collection(db, "posts"), {
+               title, content, author, category,
+               image: imageBase64,
+               date: new Date().toLocaleDateString("tr-TR"),
+               viewCount: 0,
+               likeCount: 0,
+               featured: false
+            });
+            alert("Yazı yayımlandı!");
+            ["npTitle","npContent","npAuthor"].forEach(id => document.getElementById(id).value = "");
+            document.getElementById("npCategory").selectedIndex = 0;
+            document.getElementById("npImage").value = "";
+            document.getElementById("imgPreview").style.display = "none";
+            document.getElementById("newPostForm").classList.remove("open");
+            window.location.reload();
+         } catch (err) {
+            alert("Hata: " + err.message);
+         } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Yayımla';
+         }
+      });
+
+      /* ── TÜM VERİLERİ YÜKlE ─────────────── */
+      async function loadAll() {
+         const [postsSnap, messagesSnap, subsSnap, commentsSnap] = await Promise.all([
+            getDocs(collection(db, "posts")),
+            getDocs(collection(db, "messages")),
+            getDocs(collection(db, "subscribers")),
+            getDocs(collection(db, "comments"))
+         ]);
+
+         const posts    = [];
+         const messages = [];
+         const subs     = [];
+
+         postsSnap.forEach(d    => posts.push({ id: d.id, ...d.data() }));
+         messagesSnap.forEach(d => messages.push({ id: d.id, ...d.data() }));
+         subsSnap.forEach(d     => subs.push({ id: d.id, ...d.data() }));
+
+         // ── Feature 9: İSTATİSTİKLER ────────
+         const totalViews    = posts.reduce((s, p) => s + (p.viewCount || 0), 0);
+         const totalLikes    = posts.reduce((s, p) => s + (p.likeCount || 0), 0);
+         const unreadCount   = messages.filter(m => !m.read).length;
+
+         document.getElementById("statPosts").textContent       = posts.length;
+         document.getElementById("statViews").textContent       = totalViews;
+         document.getElementById("statLikes").textContent       = totalLikes;
+         document.getElementById("statMessages").textContent    = messages.length;
+         document.getElementById("statSubscribers").textContent = subs.length;
+         document.getElementById("statComments").textContent    = commentsSnap.size;
+
+         // Okunmamış rozet
+         if (unreadCount > 0) {
+            const badge = document.getElementById("unreadBadge");
+            badge.textContent  = unreadCount;
+            badge.style.display = "inline-flex";
+         }
+
+         // ── YAZILLAR LİSTESİ ──────────────────
+         renderPosts(posts);
+
+         // ── Feature 8: MESAJLAR ───────────────
+         renderMessages(messages);
+
+         // ── Feature 7: BÜLTEN ABONELERİ ──────
+         renderSubscribers(subs);
+
+         // ── Feature 10: PROFİL ────────────────
+         loadProfile();
+
+         // ── YORUMLAR ──────────────────────────
+         loadAdminComments(posts);
+      }
+
+      /* ── YAZILLAR ────────────────────────── */
+      function renderPosts(posts) {
+         const loadingMsg = document.getElementById("loadingMsg");
+         const postList   = document.getElementById("postList");
+         loadingMsg.style.display = "none";
+
+         if (!posts.length) {
+            postList.innerHTML = `<p class="empty-msg">Henüz hiç yazı yok.</p>`;
+            return;
+         }
+
+         posts.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+
+         posts.forEach(post => {
+            const div = document.createElement("div");
+            div.classList.add("admin-post");
+            if (post.featured) div.classList.add("is-featured");
+            div.id = "post-" + post.id;
+
+            div.innerHTML = `
+               <div class="post-info">
+                  <h3>${post.featured ? '<i class="fa-solid fa-star" style="color:#f9a825;font-size:0.85rem;margin-right:4px"></i>' : ""}${post.title}</h3>
+                  <div class="meta">
+                     <span>${post.author} · ${post.date}</span>
+                     ${post.category ? `<span class="meta-cat">${post.category}</span>` : ""}
+                     <span><i class="fa-regular fa-eye"></i> ${post.viewCount || 0}</span>
+                     <span><i class="fa-regular fa-heart"></i> ${post.likeCount || 0}</span>
+                  </div>
+               </div>
+               <div class="actions">
+                  <button class="btn-feature ${post.featured ? 'active' : ''}" title="${post.featured ? 'Öne çıkarımı kaldır' : 'Öne çıkar'}"
+                     data-id="${post.id}" data-featured="${post.featured ? 'true' : 'false'}">
+                     <i class="fa-${post.featured ? 'solid' : 'regular'} fa-star"></i>
+                  </button>
+                  <button class="btn-edit" title="Düzenle"
+                     data-id="${post.id}"
+                     data-title="${encodeURIComponent(post.title)}"
+                     data-content="${encodeURIComponent(post.content)}"
+                     data-author="${encodeURIComponent(post.author)}">
+                     <i class="fa-solid fa-pen"></i>
+                  </button>
+                  <button class="btn-delete" title="Sil" data-id="${post.id}">
+                     <i class="fa-solid fa-trash"></i>
+                  </button>
+               </div>
+            `;
+            postList.appendChild(div);
+         });
+
+         // Feature 5: ÖÇNE ÇIKAR ─────────────
+         postList.querySelectorAll(".btn-feature").forEach(btn => {
+            btn.addEventListener("click", async () => {
+               const id         = btn.dataset.id;
+               const isFeatured = btn.dataset.featured === "true";
+               const newVal     = !isFeatured;
+
+               // Önce diğer featured'ları kaldır
+               if (newVal) {
+                  const allPosts = document.querySelectorAll(".admin-post");
+                  for (const el of allPosts) {
+                     const fb = el.querySelector(".btn-feature");
+                     if (fb && fb.dataset.id !== id && fb.dataset.featured === "true") {
+                        await updateDoc(doc(db, "posts", fb.dataset.id), { featured: false });
+                     }
+                  }
+               }
+
+               await updateDoc(doc(db, "posts", id), { featured: newVal });
+               window.location.reload();
+            });
+         });
+
+         // SİL
+         postList.querySelectorAll(".btn-delete").forEach(btn => {
+            btn.addEventListener("click", async () => {
+               if (!confirm("Bu yazıyı silmek istediğine emin misin?")) return;
+               await deleteDoc(doc(db, "posts", btn.dataset.id));
+               document.getElementById("post-" + btn.dataset.id).remove();
+            });
+         });
+
+         // DÜZENLE
+         postList.querySelectorAll(".btn-edit").forEach(btn => {
+            btn.addEventListener("click", async () => {
+               const id         = btn.dataset.id;
+               const newTitle   = prompt("Başlık:",   decodeURIComponent(btn.dataset.title));
+               if (newTitle === null) return;
+               const newContent = prompt("İçerik:",   decodeURIComponent(btn.dataset.content));
+               if (newContent === null) return;
+               const newAuthor  = prompt("Yazar:",    decodeURIComponent(btn.dataset.author));
+               if (newAuthor === null) return;
+               await updateDoc(doc(db, "posts", id), {
+                  title: newTitle, content: newContent, author: newAuthor
+               });
+               alert("Güncellendi.");
+               window.location.reload();
+            });
+         });
+      }
+
+      /* ── Feature 8: MESAJLAR ─────────────── */
+      function renderMessages(messages) {
+         const list = document.getElementById("messageList");
+         if (!messages.length) {
+            list.innerHTML = `<p class="empty-msg"><i class="fa-regular fa-envelope-open"></i> Henüz mesaj yok.</p>`;
+            return;
+         }
+         messages.sort((a, b) => (b.date + b.time || "").localeCompare(a.date + a.time || ""));
+         list.innerHTML = "";
+
+         messages.forEach(msg => {
+            const card = document.createElement("div");
+            card.classList.add("message-card");
+            if (!msg.read) card.classList.add("unread");
+
+            card.innerHTML = `
+               <div class="msg-header">
+                  <span class="msg-sender">
+                     ${!msg.read ? '<span class="unread-dot"></span>' : ''}${msg.name}
+                  </span>
+                  <span class="msg-date">${msg.date} ${msg.time || ""}</span>
+               </div>
+               <div class="msg-subject">${msg.subject}</div>
+               <div class="msg-preview">${msg.message}</div>
+               <div class="msg-full">
+                  ${msg.message}
+                  <a class="msg-email-link" href="mailto:${msg.email}">
+                     <i class="fa-solid fa-reply"></i> ${msg.email} adresine yanıtla
+                  </a>
+               </div>
+            `;
+
+            card.addEventListener("click", async () => {
+               const full = card.querySelector(".msg-full");
+               const isOpen = full.style.display === "block";
+               full.style.display = isOpen ? "none" : "block";
+               if (!msg.read) {
+                  msg.read = true;
+                  card.classList.remove("unread");
+                  card.querySelector(".unread-dot")?.remove();
+                  await updateDoc(doc(db, "messages", msg.id), { read: true });
+               }
+            });
+
+            list.appendChild(card);
+         });
+      }
+
+      /* ── Feature 7: BÜLTEN ABONELERİ ──────── */
+      function renderSubscribers(subs) {
+         const list = document.getElementById("subscriberList");
+         if (!subs.length) {
+            list.innerHTML = `<p class="empty-msg"><i class="fa-regular fa-bell-slash"></i> Henüz abone yok.</p>`;
+            return;
+         }
+         list.innerHTML = `<p class="section-label">${subs.length} abone</p>` +
+            subs.map(s => `
+               <div class="subscriber-item">
+                  <span><i class="fa-regular fa-envelope"></i> ${s.email}</span>
+                  <span class="sub-date">${s.date}</span>
+               </div>
+            `).join("");
+      }
+
+      /* ── Feature 10: PROFİL ─────────────── */
+      function setPickerIcon(inputId, iconClass) {
+         document.getElementById(inputId).value = iconClass;
+         const num = inputId.replace("pfInt","").replace("Icon","");
+         const preview = document.getElementById("pfInt" + num + "Preview");
+         if (preview) {
+            preview.className = "fa-solid " + iconClass;
+         }
+         const picker = document.querySelector(`.icon-picker[data-target="${inputId}"]`);
+         if (picker) {
+            picker.querySelectorAll("span").forEach(s => s.classList.remove("selected"));
+            const match = picker.querySelector(`span[data-icon="${iconClass}"]`);
+            if (match) match.classList.add("selected");
+         }
+      }
+
+      document.querySelectorAll(".icon-picker").forEach(picker => {
+         picker.querySelectorAll("span").forEach(span => {
+            span.addEventListener("click", () => {
+               const icon = span.dataset.icon;
+               const targetId = picker.dataset.target;
+               setPickerIcon(targetId, icon);
+            });
+         });
+      });
+
+      /* ── YORUMLAR ───────────────────────── */
+      async function loadAdminComments(posts) {
+         const container = document.getElementById("commentAdminList");
+         const postMap   = {};
+         posts.forEach(p => postMap[p.id] = p.title);
+
+         try {
+            const snap = await getDocs(collection(db, "comments"));
+            const all  = [];
+            snap.forEach(d => all.push({ id: d.id, ...d.data() }));
+            all.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
+
+            // badge
+            if (all.length > 0) {
+               const badge = document.getElementById("commentBadge");
+               badge.textContent   = all.length;
+               badge.style.display = "inline-flex";
+            }
+
+            if (!all.length) {
+               container.innerHTML = `<p class="empty-msg">Henüz yorum yok.</p>`;
+               return;
+            }
+
+            container.innerHTML = "";
+            all.forEach(c => {
+               const card = document.createElement("div");
+               card.className = "comment-admin-card";
+               card.innerHTML = `
+                  <div class="ca-meta">
+                     <span class="ca-name"><i class="fa-solid fa-circle-user"></i> ${c.name}</span>
+                     <span class="msg-date">${c.date || ""}</span>
+                  </div>
+                  <div class="ca-post">📝 ${postMap[c.postId] || c.postId || "?"}</div>
+                  <p class="ca-text">${c.text}</p>
+                  ${c.reply ? `<div class="ca-reply-box"><i class="fa-solid fa-reply"></i> <strong>Admin:</strong> ${c.reply}</div>` : ""}
+                  <textarea class="ca-reply-input" placeholder="Cevabınızı yazın...">${c.reply || ""}</textarea>
+                  <div class="ca-actions">
+                     <button class="btn-ca-reply">${c.reply ? "✏️ Düzenle" : "💬 Cevapla"}</button>
+                     <button class="btn-ca-send">✓ Kaydet</button>
+                     <button class="btn-ca-delete">🗑 Sil</button>
+                  </div>
+               `;
+
+               const textarea  = card.querySelector(".ca-reply-input");
+               const replyBtn  = card.querySelector(".btn-ca-reply");
+               const sendBtn   = card.querySelector(".btn-ca-send");
+               const deleteBtn = card.querySelector(".btn-ca-delete");
+
+               replyBtn.addEventListener("click", () => {
+                  textarea.style.display = textarea.style.display === "none" ? "block" : "none";
+                  sendBtn.style.display  = sendBtn.style.display  === "none" ? "inline-block" : "none";
+                  if (textarea.style.display === "block") textarea.focus();
+               });
+
+               sendBtn.addEventListener("click", async () => {
+                  const reply = textarea.value.trim();
+                  if (!reply) return;
+                  sendBtn.disabled = true;
+                  try {
+                     await updateDoc(doc(db, "comments", c.id), {
+                        reply,
+                        repliedAt: new Date().toISOString()
+                     });
+                     c.reply = reply;
+                     card.querySelector(".ca-reply-box")?.remove();
+                     const newBox = document.createElement("div");
+                     newBox.className = "ca-reply-box";
+                     newBox.innerHTML = `<i class="fa-solid fa-reply"></i> <strong>Admin:</strong> ${reply}`;
+                     card.querySelector(".ca-text").after(newBox);
+                     textarea.style.display = "none";
+                     sendBtn.style.display  = "none";
+                     replyBtn.textContent   = "✏️ Düzenle";
+                  } catch (err) {
+                     alert("Hata: " + err.message);
+                  } finally {
+                     sendBtn.disabled = false;
+                  }
+               });
+
+               deleteBtn.addEventListener("click", async () => {
+                  if (!confirm("Bu yorum silinsin mi?")) return;
+                  await deleteDoc(doc(db, "comments", c.id));
+                  card.remove();
+               });
+
+               container.appendChild(card);
+            });
+         } catch (err) {
+            container.innerHTML = `<p class="empty-msg">Yüklenemedi: ${err.message}</p>`;
+         }
+      }
+
+      async function loadProfile() {
+         try {
+            const snap = await getDoc(doc(db, "settings", "profile"));
+            if (snap.exists()) {
+               const p = snap.data();
+               document.getElementById("pfName").value      = p.name      || "";
+               document.getElementById("pfTitle").value     = p.title     || "";
+               document.getElementById("pfBio1").value      = p.bio1      || "";
+               document.getElementById("pfBio2").value      = p.bio2      || "";
+               document.getElementById("pfInt1Title").value = p.int1Title || "";
+               document.getElementById("pfInt1Desc").value  = p.int1Desc  || "";
+               document.getElementById("pfInt2Title").value = p.int2Title || "";
+               document.getElementById("pfInt2Desc").value  = p.int2Desc  || "";
+               document.getElementById("pfInt3Title").value = p.int3Title || "";
+               document.getElementById("pfInt3Desc").value  = p.int3Desc  || "";
+               document.getElementById("pfInt4Title").value = p.int4Title || "";
+               document.getElementById("pfInt4Desc").value  = p.int4Desc  || "";
+               if (p.int1Icon) setPickerIcon("pfInt1Icon", p.int1Icon);
+               if (p.int2Icon) setPickerIcon("pfInt2Icon", p.int2Icon);
+               if (p.int3Icon) setPickerIcon("pfInt3Icon", p.int3Icon);
+               if (p.int4Icon) setPickerIcon("pfInt4Icon", p.int4Icon);
+               if (p.heroPhotoUrl) {
+                  document.getElementById("pfHeroPhotoUrl").value = p.heroPhotoUrl;
+                  document.getElementById("heroPhotoPreview").src  = p.heroPhotoUrl;
+               }
+               if (p.blogPhotoUrl) {
+                  document.getElementById("pfBlogPhotoUrl").value = p.blogPhotoUrl;
+                  document.getElementById("blogPhotoPreview").src  = p.blogPhotoUrl;
+               }
+               if (p.aboutPhotoUrl) {
+                  document.getElementById("pfAboutPhotoUrl").value = p.aboutPhotoUrl;
+                  document.getElementById("aboutPhotoPreview").src  = p.aboutPhotoUrl;
+               }
+               if (p.heroBgUrl) {
+                  document.getElementById("pfHeroBgUrl").value = p.heroBgUrl;
+                  document.getElementById("heroBgPreview").src  = p.heroBgUrl;
+               }
+               document.getElementById("pfTag1").value = p.tag1 || "";
+               document.getElementById("pfTag2").value = p.tag2 || "";
+               document.getElementById("pfTag3").value = p.tag3 || "";
+               document.getElementById("pfTag4").value = p.tag4 || "";
+               document.getElementById("pfLinkedinUrl").value = p.linkedinUrl || "";
+               document.getElementById("pfGithubUrl").value   = p.githubUrl   || "";
+            }
+         } catch (_) {}
+      }
+
+      // FOTOĞRAF → BASE64 (Firebase Storage gerektirmez, ücretsiz çalışır)
+      function resizeToBase64(file, maxSize = 400) {
+         return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = e => {
+               const img = new Image();
+               img.onload = () => {
+                  const canvas = document.createElement("canvas");
+                  const ratio  = Math.min(maxSize / img.width, maxSize / img.height, 1);
+                  canvas.width  = img.width  * ratio;
+                  canvas.height = img.height * ratio;
+                  canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+                  resolve(canvas.toDataURL("image/jpeg", 0.82));
+               };
+               img.onerror = reject;
+               img.src = e.target.result;
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+         });
+      }
+
+      function setupPhotoUpload(fileInputId, btnId, previewId, msgId, urlFieldId, maxSize = 400) {
+         document.getElementById(btnId).addEventListener("click", async () => {
+            const file = document.getElementById(fileInputId).files[0];
+            if (!file) { alert("Lütfen bir fotoğraf seçin."); return; }
+            try {
+               const base64 = await resizeToBase64(file, maxSize);
+               document.getElementById(urlFieldId).value = base64;
+               document.getElementById(previewId).src    = base64;
+               const msg = document.getElementById(msgId);
+               msg.style.display = "block";
+               setTimeout(() => { msg.style.display = "none"; }, 3000);
+            } catch (err) {
+               alert("Hata: " + err.message);
+            }
+         });
+      }
+
+      setupPhotoUpload("heroPhotoFile",  "uploadHeroBtn",    "heroPhotoPreview",  "heroUploadMsg",    "pfHeroPhotoUrl");
+      setupPhotoUpload("blogPhotoFile",  "uploadBlogBtn",    "blogPhotoPreview",  "blogUploadMsg",    "pfBlogPhotoUrl");
+      setupPhotoUpload("aboutPhotoFile", "uploadAboutBtn",   "aboutPhotoPreview", "aboutUploadMsg",   "pfAboutPhotoUrl");
+      setupPhotoUpload("heroBgFile",     "uploadHeroBgBtn",  "heroBgPreview",     "heroBgUploadMsg",  "pfHeroBgUrl",   800);
+
+      document.getElementById("profileForm").addEventListener("submit", async (e) => {
+         e.preventDefault();
+         const data = {
+            name:         document.getElementById("pfName").value.trim(),
+            title:        document.getElementById("pfTitle").value.trim(),
+            bio1:         document.getElementById("pfBio1").value.trim(),
+            bio2:         document.getElementById("pfBio2").value.trim(),
+            int1Icon:     document.getElementById("pfInt1Icon").value,
+            int1Title:    document.getElementById("pfInt1Title").value.trim(),
+            int1Desc:     document.getElementById("pfInt1Desc").value.trim(),
+            int2Icon:     document.getElementById("pfInt2Icon").value,
+            int2Title:    document.getElementById("pfInt2Title").value.trim(),
+            int2Desc:     document.getElementById("pfInt2Desc").value.trim(),
+            int3Icon:     document.getElementById("pfInt3Icon").value,
+            int3Title:    document.getElementById("pfInt3Title").value.trim(),
+            int3Desc:     document.getElementById("pfInt3Desc").value.trim(),
+            int4Icon:     document.getElementById("pfInt4Icon").value,
+            int4Title:    document.getElementById("pfInt4Title").value.trim(),
+            int4Desc:     document.getElementById("pfInt4Desc").value.trim(),
+            heroPhotoUrl:  document.getElementById("pfHeroPhotoUrl").value,
+            blogPhotoUrl:  document.getElementById("pfBlogPhotoUrl").value,
+            aboutPhotoUrl: document.getElementById("pfAboutPhotoUrl").value,
+            heroBgUrl:     document.getElementById("pfHeroBgUrl").value,
+            tag1:         document.getElementById("pfTag1").value.trim(),
+            tag2:         document.getElementById("pfTag2").value.trim(),
+            tag3:         document.getElementById("pfTag3").value.trim(),
+            tag4:         document.getElementById("pfTag4").value.trim(),
+            linkedinUrl:  document.getElementById("pfLinkedinUrl").value.trim(),
+            githubUrl:    document.getElementById("pfGithubUrl").value.trim(),
+            updatedAt:    new Date().toISOString()
+         };
+         await setDoc(doc(db, "settings", "profile"), data);
+         const msg = document.getElementById("profileSavedMsg");
+         msg.style.display = "block";
+         setTimeout(() => { msg.style.display = "none"; }, 3000);
+      });
+
+   </script>
+
+</body>
+</html>

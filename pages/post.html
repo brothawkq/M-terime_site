@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="../public/css/index.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+   <title>Yazı — Toprak Arda Duman</title>
+   <style>
+      .comment-reply {
+         margin-top: 10px;
+         background: #f0f7f0;
+         border-left: 3px solid #2e7d32;
+         border-radius: 0 8px 8px 0;
+         padding: 10px 14px;
+      }
+      .comment-reply-label {
+         display: block;
+         font-size: 0.75rem;
+         font-weight: 700;
+         color: #2e7d32;
+         margin-bottom: 4px;
+         font-family: 'Josefin Sans', sans-serif;
+         text-transform: uppercase;
+         letter-spacing: 0.4px;
+      }
+      .comment-reply p {
+         margin: 0;
+         font-size: 0.9rem;
+         color: #2d4a2d;
+      }
+   </style>
+</head>
+
+<body>
+
+   <div class="topbar">
+      <div class="wrapper target">
+         <div class="left">
+            <a href="#" target="_blank"><i class="fa-brands fa-square-x-twitter"></i></a>
+            <a href="https://www.instagram.com/toprakarda62?igsh=MWpqdGJwZDV3MHMydQ==" target="_blank"><i class="fa-brands fa-square-instagram"></i></a>
+            <a href="#" target="_blank"><i class="fa-brands fa-square-facebook"></i></a>
+            <a href="#" target="_blank"><i class="fa-brands fa-square-pinterest"></i></a>
+         </div>
+         <div class="center">
+            <a href="../index.html">ANA SAYFA</a>
+            <a href="./blog.html">BLOG</a>
+            <a href="./contact.html">İLETİŞİM</a>
+            <a href="./login.html">GİRİŞ</a>
+         </div>
+         <div class="right">
+            <span>
+               <img src="../public/img/user-1.png" alt="kullanıcı">
+            </span>
+            <div class="searchEngine" id="searchEngine">
+               <input type="text" placeholder="Ara...">
+               <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <!-- Yazı detayı -->
+   <div class="postDetail" id="postDetail">
+      <p style="text-align:center;padding:60px 0;font-family:'Josefin Sans',sans-serif;color:#999">Yükleniyor...</p>
+   </div>
+
+   <!-- ─── BEĞENİ + GÖRÜNTÜLENME + YORUMLAR ─────────────────────────── -->
+   <div class="post-interactions" id="postInteractions" style="display:none">
+
+      <!-- Feature 2 & 3: Sayaçlar + Beğeni -->
+      <div class="like-bar">
+         <button class="like-btn" id="likeBtn" title="Beğen">
+            <i class="fa-regular fa-heart"></i>
+            <span id="likeCount">0</span>
+         </button>
+         <span class="view-stat">
+            <i class="fa-regular fa-eye"></i>
+            <span id="viewCount">0</span> görüntülenme
+         </span>
+      </div>
+
+      <!-- Feature 4: Yorumlar -->
+      <div class="comments-section">
+         <h3 class="comments-title">
+            <i class="fa-regular fa-comments"></i>
+            Yorumlar <span class="comments-count" id="commentCount">(0)</span>
+         </h3>
+
+         <div id="commentsList" class="comments-list"></div>
+
+         <form id="commentForm" class="comment-form">
+            <h4>Yorum Ekle</h4>
+            <div class="comment-form-row">
+               <input type="text" id="commenterName" placeholder="Adınız *" required maxlength="50">
+            </div>
+            <div class="comment-form-row">
+               <textarea id="commentText" placeholder="Yorumunuzu yazın... *" required maxlength="600"></textarea>
+            </div>
+            <button type="submit" class="comment-submit">
+               <i class="fa-solid fa-paper-plane"></i> Yorum Gönder
+            </button>
+         </form>
+      </div>
+
+   </div>
+
+   <script src="../public/js/search.js"></script>
+   <script src="../public/js/scroll.js"></script>
+
+   <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import {
+         getFirestore,
+         doc, getDoc, updateDoc,
+         collection, addDoc, getDocs,
+         query, where,
+         increment
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+         apiKey: "AIzaSyBk9mcH4cFoF5Er6zKB6oanooO6ZYT3_Vc",
+         authDomain: "blog-5a0b5.firebaseapp.com",
+         projectId: "blog-5a0b5",
+         storageBucket: "blog-5a0b5.firebasestorage.app",
+         messagingSenderId: "798568666109",
+         appId: "1:798568666109:web:128224277ce71b4ab1bf94",
+         measurementId: "G-H56W0VWLS9"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db  = getFirestore(app);
+
+      const params    = new URLSearchParams(window.location.search);
+      const postId    = params.get("id");
+      const container = document.getElementById("postDetail");
+
+      if (!postId) {
+         container.innerHTML = "<p style='text-align:center;padding:60px 0;font-family:Arvo,serif'>Yazı bulunamadı.</p>";
+      } else {
+         (async () => {
+            try {
+               // ── YAZIYI YÜKlE ─────────────────────────────────────
+               const docRef  = doc(db, "posts", postId);
+               const docSnap = await getDoc(docRef);
+
+               if (!docSnap.exists()) {
+                  container.innerHTML = "<p style='text-align:center;padding:60px 0;font-family:Arvo,serif'>Yazı bulunamadı.</p>";
+                  return;
+               }
+
+               const post = docSnap.data();
+               document.title = `${post.title} — Toprak Arda Duman`;
+
+               // Okuma süresi
+               const words    = (post.content || "").trim().split(/\s+/).length;
+               const readTime = Math.max(1, Math.ceil(words / 200));
+
+               container.innerHTML = `
+                  <a class="backLink" href="./blog.html">← Tüm Yazılar</a>
+                  <div class="post-detail-badges">
+                     <span class="badge-readtime"><i class="fa-regular fa-clock"></i> ${readTime} dk okuma</span>
+                     ${post.category ? `<span class="badge-category">${post.category}</span>` : ""}
+                     ${post.featured ? `<span class="badge-featured"><i class="fa-solid fa-star"></i> Öne Çıkan</span>` : ""}
+                  </div>
+                  <h1>${post.title}</h1>
+                  ${post.image ? `<img src="${post.image}" alt="${post.title}">` : ""}
+                  <p>${post.content}</p>
+                  <div class="authorAndDate">
+                     <span>${post.author}</span>
+                     <span>${post.date}</span>
+                  </div>
+               `;
+
+               // ── Feature 2: GÖRÜNTÜLENME SAYACI ───────────────────
+               const currentViews = (post.viewCount || 0) + 1;
+               document.getElementById("viewCount").textContent = currentViews;
+               updateDoc(docRef, { viewCount: increment(1) });   // fire & forget
+
+               // ── Feature 3: BEĞENİ ─────────────────────────────────
+               const likedPosts  = JSON.parse(localStorage.getItem("likedPosts") || "[]");
+               const isLiked     = likedPosts.includes(postId);
+               const likeBtn     = document.getElementById("likeBtn");
+               const likeCountEl = document.getElementById("likeCount");
+
+               likeCountEl.textContent = post.likeCount || 0;
+
+               if (isLiked) {
+                  likeBtn.classList.add("liked");
+                  likeBtn.querySelector("i").className = "fa-solid fa-heart";
+               }
+
+               likeBtn.addEventListener("click", async () => {
+                  if (likeBtn.classList.contains("liked")) return;
+                  likeBtn.classList.add("liked");
+                  likeBtn.querySelector("i").className = "fa-solid fa-heart";
+                  likeCountEl.textContent = parseInt(likeCountEl.textContent) + 1;
+                  likedPosts.push(postId);
+                  localStorage.setItem("likedPosts", JSON.stringify(likedPosts));
+                  await updateDoc(docRef, { likeCount: increment(1) });
+               });
+
+               // ── Feature 4: YORUMLAR ───────────────────────────────
+               const commentCountEl = document.getElementById("commentCount");
+               const commentsList   = document.getElementById("commentsList");
+
+               async function loadComments() {
+                  const snap = await getDocs(
+                     query(collection(db, "comments"), where("postId", "==", postId))
+                  );
+                  const arr = [];
+                  snap.forEach(d => arr.push({ id: d.id, ...d.data() }));
+                  arr.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
+
+                  commentCountEl.textContent = `(${arr.length})`;
+
+                  if (arr.length === 0) {
+                     commentsList.innerHTML = `<p class="no-comments">Henüz yorum yok. İlk yorumu sen yap!</p>`;
+                     return;
+                  }
+                  commentsList.innerHTML = arr.map(c => `
+                     <div class="comment">
+                        <div class="comment-header">
+                           <span class="comment-name"><i class="fa-solid fa-circle-user"></i> ${c.name}</span>
+                           <span class="comment-date">${c.date}</span>
+                        </div>
+                        <p class="comment-text">${c.text}</p>
+                        ${c.reply ? `
+                        <div class="comment-reply">
+                           <span class="comment-reply-label"><i class="fa-solid fa-reply"></i> Admin yanıtı</span>
+                           <p>${c.reply}</p>
+                        </div>` : ""}
+                     </div>
+                  `).join("");
+               }
+
+               await loadComments();
+
+               document.getElementById("commentForm").addEventListener("submit", async (ev) => {
+                  ev.preventDefault();
+                  const name = document.getElementById("commenterName").value.trim();
+                  const text = document.getElementById("commentText").value.trim();
+                  if (!name || !text) return;
+
+                  const submitBtn = ev.target.querySelector("button");
+                  submitBtn.disabled = true;
+                  submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Gönderiliyor...';
+
+                  try {
+                     await addDoc(collection(db, "comments"), {
+                        postId, name, text,
+                        date: new Date().toLocaleDateString("tr-TR"),
+                        createdAt: new Date().toISOString()
+                     });
+                     document.getElementById("commenterName").value = "";
+                     document.getElementById("commentText").value   = "";
+                     await loadComments();
+                  } catch (err) {
+                     alert("Yorum eklenemedi: " + err.message);
+                  } finally {
+                     submitBtn.disabled = false;
+                     submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Yorum Gönder';
+                  }
+               });
+
+               // Etkileşim alanını göster
+               document.getElementById("postInteractions").style.display = "block";
+
+            } catch (err) {
+               console.error(err);
+               container.innerHTML = "<p style='text-align:center;padding:60px 0;font-family:Arvo,serif'>Bir hata oluştu.</p>";
+            }
+         })();
+      }
+   </script>
+
+</body>
+</html>

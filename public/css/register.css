@@ -1,0 +1,86 @@
+.posts {
+   flex: 9;
+   margin-bottom: 30px;
+   display: flex;
+   flex-wrap: wrap;
+   gap: 20px;
+}
+
+.posts .post {
+   width: calc(50% - 10px);
+   border: 1px solid rgba(0, 0, 0, 0.2);
+   border-radius: 10px;
+   padding: 15px;
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+   background: #fff;
+   transition: 0.3s;
+}
+
+.posts .post:hover {
+   transform: translateY(-5px);
+   box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.posts h1 {
+   font-family: 'Pacifico', cursive;
+}
+
+.posts img {
+   width: 100%;
+   height: 250px;
+   border-radius: 10px;
+   object-fit: cover;
+}
+
+/* 🔥 BURASI DEĞİŞTİ */
+.posts p {
+   padding: 5px;
+   font-family: 'Arvo', serif;
+   line-height: 23px;
+   max-height: 92px; /* 4 satır approx */
+   overflow: hidden;
+}
+
+/* alt kısım */
+.posts .authorAndDate {
+   width: 100%;
+   display: flex;
+   justify-content: space-between;
+   padding: 0 10px;
+   margin-top: auto;
+}
+
+.posts .authorAndDate span:nth-child(1) {
+   font-family: 'Dancing Script', cursive;
+   font-weight: 700;
+}
+
+.posts .authorAndDate span:nth-child(2) {
+   font-family: 'Ubuntu Mono', monospace;
+   font-weight: 700;
+}
+
+/* animasyon */
+.posts .post {
+   transform: translateX(-20px);
+   opacity: 0;
+   transition: all 0.5s;
+}
+
+.posts .post:nth-child(2n) {
+   transition: all 0.8s;
+}
+
+.posts .post.active {
+   transform: translateX(0);
+   opacity: 1;
+}
+
+/* responsive */
+@media (max-width: 1100px) {
+   .posts .post {
+      width: 100%;
+   }
+}

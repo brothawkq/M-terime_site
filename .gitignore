@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Editör
+.vscode/
+.idea/
+
+# Log dosyaları
+*.log
+
+# Geçici dosyalar
+*.tmp
+*.swp
